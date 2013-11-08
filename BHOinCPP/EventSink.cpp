@@ -326,8 +326,9 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 					// ... your code here ...
 					if(visible) {
 						_tprintf(TEXT("Tab is visible: %d"), m_componentID);
-						EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
-						
+						if(m_IWebBrowser2BHO != NULL) {
+							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
+						}
 					} else {
 						_tprintf(TEXT("Tab is not visible: %d"), m_componentID);
 						EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);

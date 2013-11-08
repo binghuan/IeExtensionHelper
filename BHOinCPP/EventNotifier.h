@@ -16,6 +16,9 @@ public:
 		HRESULT hr;
 		CComPtr<IHTMLDocument2>   m_pDocument; 
 		hr = webView->get_Document((IDispatch**)&m_pDocument);
+		if (hr != S_OK) {
+			return hr;
+		}
 
 		CComBSTR bstrMember(eventName);
 		DISPID dispid;  

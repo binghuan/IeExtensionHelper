@@ -128,7 +128,7 @@ IeExtToolbarButtonInfo IeManifestParser::getIeExtToolbarButtonInfo()
 		wprintf_s(_T("extToolbarButtonName: %s\r\n"), info.name);
 
 		ZeroMemory(info.iconPath, MAX_PATH);
-		_stprintf_s( info.iconPath, MAX_PATH, _T("%s\\icon.ico"), m_fileFolderPath);
+		swprintf_s( info.iconPath, MAX_PATH,  _T("%s\\icon.ico"),  m_fileFolderPath.c_str());
 
 		Value extPopupWidth = extToolbarButton.get("width", NULL);
 		info.popupWidth = extPopupWidth.asInt();
