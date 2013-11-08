@@ -1,0 +1,235 @@
+#include "ExternalFunction.h"
+#include <tchar.h>
+#include <atlcomcli.h>
+#include <oaidl.h>
+#include <mshtmlc.h>
+#include "common.h"
+#include "..\ExtensionRegister\Util.h"
+
+
+ExternalFunction::ExternalFunction(void)
+{
+	IeManifestParser *manifestParser = new IeManifestParser(hInstance);
+	m_IeExtContentScriptInfo = manifestParser->getIeExtContentScriptInfo();
+}
+
+
+ExternalFunction::~ExternalFunction(void)
+{
+}
+
+HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfoCount( __RPC__out UINT *pctinfo )
+{
+	return E_NOINTERFACE;
+}
+
+HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid, __RPC__deref_out_opt ITypeInfo **ppTInfo )
+{
+	return E_NOINTERFACE;
+}
+
+#define MAX_STRING_LENGTH 1024
+#define DISPID_CB_CUSTOMFUNTION 123001
+#define DISPID_DISPATCH_MSG_TO_BACKGROUND 123002
+#define DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT 123003
+#define DISPID_GET_BACKGROUND_PAGE 123004
+
+#define DISPID_GET_ACTIVE_TAB 123005
+#define DISPID_OPEN_NEW_TAB 123006
+
+HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( __RPC__in REFIID riid, __RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, __RPC__in_range(0,16384) UINT cNames, LCID lcid, __RPC__out_ecount_full(cNames) DISPID *rgDispId )
+{
+	HRESULT hr = NOERROR;
+
+	if(lstrcmp(rgszNames[0], L"messagebox")==0){
+		_tprintf(_T("get function call: messagebox"));
+		*rgDispId = DISPID_CB_CUSTOMFUNTION;
+	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2ContentScript")==0){
+		*rgDispId = DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT;
+	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2Background")==0){
+		*rgDispId = DISPID_DISPATCH_MSG_TO_BACKGROUND;
+	} else if(lstrcmp(rgszNames[0], L"getBackgroundPage")==0){
+		*rgDispId = DISPID_GET_BACKGROUND_PAGE;
+	} else if(lstrcmp(rgszNames[0], L"getActiveTab")==0){
+		*rgDispId = DISPID_GET_ACTIVE_TAB;
+	} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
+		*rgDispId = DISPID_OPEN_NEW_TAB;
+	} else {
+		*rgDispId = DISP_E_UNKNOWNNAME;
+		hr = ResultFromScode(DISP_E_UNKNOWNNAME);
+	}
+
+	return hr;
+}
+
+void CppCall()
+{
+	MessageBox(NULL, L"You call external messagebox", L"Oh My god", 0);
+}
+
+HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _In_ REFIID riid, _In_ LCID lcid, _In_ WORD wFlags, _In_ DISPPARAMS *pDispParams, _Out_opt_ VARIANT *pVarResult, _Out_opt_ EXCEPINFO *pExcepInfo, _Out_opt_ UINT *puArgErr )
+{
+	HRESULT hr = S_OK;
+
+	switch(dispIdMember) {
+	case DISPID_OPEN_NEW_TAB:
+		{
+			VARIANT varMyURL;
+			VariantInit(&varMyURL);
+			varMyURL.vt = VT_BSTR;
+			varMyURL.bstrVal = SysAllocString(pDispParams->rgvarg[0].bstrVal);
+
+			VARIANT vFlags = {0};
+			VariantInit(&vFlags);
+			vFlags.vt = VT_I4;
+			vFlags.intVal |= navOpenInNewTab;
+
+			m_IWebBrowser2ContentScript-> Navigate2(&varMyURL,&vFlags,NULL,NULL,NULL);
+		}
+		break;
+	case DISPID_CB_CUSTOMFUNTION:
+		{
+			CppCall();
+		}
+		break;
+	case DISPID_GET_ACTIVE_TAB:
+		{
+		
+			printf("DISPID_GET_ACTIVE_TABID.\n");
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+			CComPtr<IHTMLWindow2> pWindow;	
+			m_pDocument->get_parentWindow(&pWindow);
+			CComBSTR bstrLanguage = _T("javascript");
+
+			if(pVarResult != NULL)
+			{
+				VariantInit(pVarResult);
+				V_VT(pVarResult)=VT_INT;
+				V_INT(pVarResult) = 99999999;
+			}
+		}
+		
+
+		break;
+
+	case DISPID_DISPATCH_MSG_TO_BACKGROUND:
+		{
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+			CComBSTR bstrMember = _T("onMessageReceiveFromContentScript");
+			DISPID dispid;
+			m_pDocument->get_Script(&m_pScript);
+			if(m_pScript!=NULL)  
+			{  
+				hr = m_pScript->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
+				if (SUCCEEDED(hr))  
+				{  
+					DISPPARAMS dispparams;  
+					memset(&dispparams, 0, sizeof(DISPPARAMS));  
+					dispparams.cArgs = 0;  
+					dispparams.cNamedArgs = 0;  
+
+					EXCEPINFO excepInfo;  
+					memset(&excepInfo, 0, sizeof(EXCEPINFO));  
+					CComVariant vaResult;  
+					// initialize to invalid arg  
+					UINT nArgErr = (UINT)-1;  
+					hr = m_pScript->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
+				}  
+			}
+		}
+		break;
+	case DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT:
+		{
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2ContentScript->get_Document((IDispatch**)&m_pDocument);
+
+			CComQIPtr<IHTMLWindow2> pWindow;
+			//m_pDocument->get_parentWindow(&pWindow);
+
+			m_pDocument->get_Script(&m_pScript);  
+
+			VARIANT extensionObj;
+			char* tempStr = const_cast<char*>(m_IeExtContentScriptInfo.extenionID.c_str());
+			_TCHAR* propertyName = new _TCHAR[MAX_PATH];
+			Util::AnsiToUnicode16(tempStr, propertyName, MAX_PATH);
+
+			hr = Util::GetProperty(m_pScript, propertyName, &extensionObj);
+
+			CComBSTR bstrMember = _T("onMessageReceiveFromBackground");
+			DISPID dispid;
+
+				hr = extensionObj.pdispVal->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
+				if (SUCCEEDED(hr))  
+				{  
+					DISPPARAMS dispparams;  
+					memset(&dispparams, 0, sizeof(DISPPARAMS));  
+					dispparams.cArgs = 0;  
+					dispparams.cNamedArgs = 0;  
+
+					EXCEPINFO excepInfo;  
+					memset(&excepInfo, 0, sizeof(EXCEPINFO));  
+					CComVariant vaResult;  
+					// initialize to invalid arg  
+					UINT nArgErr = (UINT)-1;  
+					hr = extensionObj.pdispVal->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
+				}  
+		}
+		break;
+	case DISPID_GET_BACKGROUND_PAGE:
+		{
+			printf("DISPID_GET_BACKGROUND_PAGE.\n");
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+			CComPtr<IHTMLWindow2> pWindow;	
+			m_pDocument->get_parentWindow(&pWindow);
+			CComBSTR bstrLanguage = _T("javascript");
+
+			//pVarResult = pWindow;
+			pVarResult->vt = VT_DISPATCH;
+			pVarResult->pdispVal = (IDispatch *)pWindow;
+		}
+		break;
+	default:
+		{
+			hr = E_NOINTERFACE;
+		}
+
+		break;
+	}
+
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE ExternalFunction::QueryInterface( REFIID riid, void **ppvObject )
+{
+	*ppvObject = NULL;
+	if (riid == IID_IUnknown)    *ppvObject = this;
+	else if (riid == IID_IDispatch)    *ppvObject = (IDispatch*)this;
+	if(*ppvObject)
+	{
+		AddRef();
+		return S_OK;
+	}
+	return E_NOINTERFACE;
+
+}
+
+ULONG STDMETHODCALLTYPE ExternalFunction::AddRef( void )
+{
+	return E_NOINTERFACE;
+}
+
+ULONG STDMETHODCALLTYPE ExternalFunction::Release( void )
+{
+	return E_NOINTERFACE;
+}

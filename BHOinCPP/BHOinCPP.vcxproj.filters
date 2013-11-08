@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="jsoncpp">
+      <UniqueIdentifier>{a3a1083a-dd87-4cdd-80e6-0a410c5f5289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jsoncpp\include">
+      <UniqueIdentifier>{edb9c6fd-890f-4d57-a44c-cc1c054a2048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jsoncpp\include\json">
+      <UniqueIdentifier>{f6f5c29a-cac9-423b-823c-816382c968f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ClassFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BHO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolbarButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DocUIHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExternalFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSink.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cathelp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ExtensionRegister\IeManifestParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dll.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClassFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Unknown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BHO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\autolink.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\config.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\features.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\forwards.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\json.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\reader.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\value.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="jsoncpp_5_0\include\json\writer.h">
+      <Filter>jsoncpp\include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolbarButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DocUIHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExternalFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cathelp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ExtensionRegister\IeManifestParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ExtensionRegister\Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventNotifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

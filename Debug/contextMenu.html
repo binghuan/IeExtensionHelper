@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<!--
+	<script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script>
+	-->
+	</head>
+	<body>
+	<script language="JavaScript">
+		/*
+	  var parentwin = external.menuArguments;
+	  var doc = parentwin.document;
+	  var sel = doc.selection;
+	  var rng = sel.createRange();
+	  var str = new String(rng.text);
+
+	  if(0 < str.length)
+	  {
+		window.open("http://search.live.com/results.aspx?q="
+		  + str, "_blank");
+	  }
+	  */
+	  
+	  /*
+	  
+	  var shell = new ActiveXObject("WScript.Shell");
+shell.run("mozilla \"" + external.menuArguments.document.URL + "\"");
+
+	  */
+	 
+
+		try{
+		Firebug.chrome.open();
+		} catch (e) {
+		
+			  // inject script with .src url
+			var head = external.menuArguments.document.getElementsByTagName("head")[0];
+			var scriptOfFirebugLite = external.menuArguments.document.createElement("script");
+			scriptOfFirebugLite.src = "https://getfirebug.com/firebug-lite.js#enableTrace,overrideConsole,startOpened,saveCookies,ignoreFirebugElements";
+		//scriptOfFirebugLite .src = "https://getfirebug.com/firebug-lite.js";
+			head.appendChild(scriptOfFirebugLite );
+		}
+	 
+
+	 
+	  
+		
+		
+
+	</script>
+	</body>
+</html>
