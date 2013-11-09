@@ -1,8 +1,3 @@
-/*
- Copyright (C) 2009 Moutaz Haq <cefarix@gmail.com>
- This file is released under the Code Project Open License <http://www.codeproject.com/info/cpol10.aspx>
-*/
-
 #include "common.h"
 #include <Olectl.h>
 #include "ClassFactory.h"
@@ -24,7 +19,6 @@ using namespace std;
 #include "Cathelp.h"
 #include "../ExtensionRegister/IeManifestParser.h"
 
-#define BUFFERSIZE 4096
 _TCHAR msgBuff[4096];
 
 // Our DLL-global reference count. 
@@ -39,7 +33,6 @@ HINSTANCE hInstance=NULL;
 
 const CLSID CLSID_IE_BHO = { 0xca63de6, 0x4947, 0x4096, { 0x95, 0x9c, 0x0, 0x2f, 0xeb, 0x7c, 0x2f, 0x90 } }; // The CLSID in binary format
 const CLSID CLSID_IE_TOOBAR = { 0x25f07ca0, 0x787a, 0x4770, { 0xb3, 0x29, 0x94, 0x1e, 0xb7, 0x2f, 0xda, 0x5 } }; // The CLSID in binary format
-
 
 void DisplayError(_TCHAR *lpszFunction) 
 	// Routine Description:
@@ -82,73 +75,6 @@ void DisplayError(_TCHAR *lpszFunction)
 
 	LocalFree(lpMsgBuf);
 	LocalFree(lpDisplayBuf);
-}
-
-static char* readInputFile( _TCHAR *filePath )
-{
-	//DisplayError(_T("ready to read file"));
-	_tprintf(_T("ready to read file: %s\r\n"), filePath);
-	swprintf_s( msgBuff, 4096, _T("ready to read file: %s\r\n"), filePath );
-	MessageBox(NULL,  msgBuff, _T("info"), MB_OK);
-
-	HANDLE hFile; 
-	DWORD  dwBytesRead = 0;
-	char   ReadBuffer[BUFFERSIZE] = {0};
-
-	hFile = CreateFile(filePath,               // file to open
-		GENERIC_READ,          // open for reading
-		FILE_SHARE_READ,       // share for reading
-		NULL,                  // default security
-		OPEN_EXISTING,         // existing file only
-		FILE_ATTRIBUTE_NORMAL, // normal file
-		NULL);                 // no attr. template
-
-	if (hFile == INVALID_HANDLE_VALUE) 
-	{ 
-		DisplayError(TEXT("CreateFile"));
-		_tprintf(TEXT("Terminal failure: unable to open file \"%s\" for read.\n"), filePath);
-		return ""; 
-	} else {
-		DisplayError(_T("Success: CreateFile"));
-	}
-
-	// Read one character less than the buffer size to save room for
-	// the terminating NULL character. 
-
-	if( FALSE == ReadFile(hFile, ReadBuffer, BUFFERSIZE-1, &dwBytesRead, NULL) )
-	{
-		DisplayError(TEXT("ReadFile"));
-		_tprintf(_T("Terminal failure: Unable to read from file.\n"));
-		CloseHandle(hFile);
-		return "";
-	} else {
-		DisplayError(TEXT("Success: ReadFile"));
-	}
-
-	// This is the section of code that assumes the file is ANSI text. 
-	// Modify this block for other data types if needed
-	if (dwBytesRead > 0 && dwBytesRead <= BUFFERSIZE-1)
-	{
-		ReadBuffer[dwBytesRead]='\0'; // NULL character
-
-		_tprintf(TEXT("Data read from %s (%d bytes): \n"), filePath, dwBytesRead);
-		printf("%s\n", ReadBuffer);
-		DisplayError(TEXT("Success: Read Data"));
-	}
-	else if (dwBytesRead == 0)
-	{
-		_tprintf(TEXT("No data read from file %s\n"),filePath);
-	}
-	else
-	{
-		_tprintf(_T("\n ** Unexpected value for dwBytesRead ** \n"));
-	}
-
-	// It is always good practice to close the open file handles even though
-	// the app will exit here and clean up open handles anyway.
-	CloseHandle(hFile);
-
-	return ReadBuffer; 
 }
 
 // Called when the DLL is loaded into the process, attached or detached from a thread, and unloaded from the process
@@ -248,7 +174,7 @@ STDAPI DllRegisterServer()
 
 	_TCHAR *registryPath = new _TCHAR[MAX_PATH];
 
-	if(bhoInfo.isDefined == true) {
+	if(bhoInfo.isDefined == TRUE) {
 
 		HKEY hk;
 		// Create our key under HKCR\\CLSID
@@ -328,7 +254,7 @@ STDAPI DllRegisterServer()
 	}
 
 	//if(false) {
-	if(toolbarButtonInfo.isDefined == true) {
+	if(toolbarButtonInfo.isDefined == TRUE) {
 
 		HKEY hk;
 
@@ -378,7 +304,7 @@ STDAPI DllRegisterServer()
 		// I believe the following tells explorer.exe not to load our BHO
 		n=1;
 		RegSetValueEx(hk,_T("ButtonText"),0,REG_SZ,(const BYTE*)toolbarButtonInfo.name,MAX_PATH);
-		RegSetValueEx(hk,_T("Icon"),0,REG_SZ,(const BYTE*)toolbarButtonInfo.iconPath,10*sizeof(TCHAR));
+		RegSetValueEx(hk,_T("Icon"),0,REG_SZ,(const BYTE*)toolbarButtonInfo.iconPath,MAX_PATH);
 
 
 		// Use the value {1FBA04EE-3024-11D2-8F1F-0000F87ABD16} to identify this toolbar button as pointing to an executable. 

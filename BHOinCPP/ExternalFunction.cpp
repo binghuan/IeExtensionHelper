@@ -5,6 +5,7 @@
 #include <mshtmlc.h>
 #include "common.h"
 #include "..\ExtensionRegister\Util.h"
+#include "..\ExtensionRegister\ExtStatus.h"
 
 
 ExternalFunction::ExternalFunction(void)
@@ -37,6 +38,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 #define DISPID_GET_ACTIVE_TAB 123005
 #define DISPID_OPEN_NEW_TAB 123006
 
+#define DISPID_IS_POPOVER_VISIBLE 123007
+
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( __RPC__in REFIID riid, __RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, __RPC__in_range(0,16384) UINT cNames, LCID lcid, __RPC__out_ecount_full(cNames) DISPID *rgDispId )
 {
 	HRESULT hr = NOERROR;
@@ -54,6 +57,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( __RPC__in REFIID riid
 		*rgDispId = DISPID_GET_ACTIVE_TAB;
 	} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
 		*rgDispId = DISPID_OPEN_NEW_TAB;
+	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
+		*rgDispId = DISPID_IS_POPOVER_VISIBLE;
 	} else {
 		*rgDispId = DISP_E_UNKNOWNNAME;
 		hr = ResultFromScode(DISP_E_UNKNOWNNAME);
@@ -72,6 +77,18 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
+	case DISPID_IS_POPOVER_VISIBLE:
+		{
+			if(pVarResult != NULL)
+			{
+				ExtStatus *extStatus = new ExtStatus(m_IeExtContentScriptInfo.extenionID);
+
+				VariantInit(pVarResult);
+				V_VT(pVarResult)=VT_BOOL;
+				V_BOOL(pVarResult) = extStatus->isPopoverVisible();
+			}
+		}
+		break;
 	case DISPID_OPEN_NEW_TAB:
 		{
 			VARIANT varMyURL;

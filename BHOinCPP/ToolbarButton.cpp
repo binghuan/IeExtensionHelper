@@ -11,6 +11,7 @@
 #include <atlbase.h>
 #include <atlwin.h>
 #include "EventNotifier.h"
+#include "..\ExtensionRegister\ExtStatus.h"
 
 // The single global object of CEventSink
 CEentSink *EventSink;
@@ -31,12 +32,14 @@ DWORD adviseCookie; // used by ConnectEventSink() and DisconnectEventSink() in c
 
 
 boolean m_IsPopoverInitialized = false;
-
+ExtStatus *extStatus;
 CToolbarButton::CToolbarButton(IeExtToolbarButtonInfo info) : CUnknown<IOleCommandTarget>(SupportedIIDs,2)
 {
 	EventSink = new CEentSink(IE_EXT_COMPONENT_TOOLBARBUTTON);
 	m_IeExtToolbarButtonInfo = info;
 	m_IsPopoverInitialized = false;
+
+	extStatus = new ExtStatus(m_IeExtToolbarButtonInfo.extenionID);
 }
 
 CToolbarButton::~CToolbarButton()
@@ -147,18 +150,13 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		if( LOWORD(wParam) == WA_ACTIVE )
 		{
 			_tprintf(_T("PopupWindow is active"));
-			if(m_pViewMMFFile ) {
-				lstrcpy( (LPTSTR) m_pViewMMFFile, L"OPEN");
-			}
+			extStatus->setPopoverVisible(true);
 		}
 		else 
 		{
 			_tprintf(_T("PopupWindow is inactive"));
 			ShowWindow(hwnd, SW_HIDE);
-
-			if(m_pViewMMFFile ) {
-				lstrcpy( (LPTSTR) m_pViewMMFFile, L"CLOSE");
-			}
+			extStatus->setPopoverVisible(false);
 		}
 		break ;
 	case WM_CREATE:

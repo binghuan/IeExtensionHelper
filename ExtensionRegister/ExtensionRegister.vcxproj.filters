@@ -27,10 +27,10 @@
     <ClInclude Include="Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="IeManifestParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IeManifestParser.h">
+    <ClInclude Include="ExtStatus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -42,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IeManifestParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtStatus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

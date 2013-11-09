@@ -7,6 +7,7 @@
 #include "Unknown.h"
 #include <shlguid.h>
 #include "..\ExtensionRegister\IeManifestParser.h"
+#include "..\ExtensionRegister\ExtStatus.h"
 
 class CToolbarButton : public CUnknown<IOleCommandTarget>  {
 public:
@@ -24,8 +25,7 @@ public:
 
 protected:
 
-	static const IID SupportedIIDs[2];
-
+	static const IID SupportedIIDs[2];	
 	
 };
 

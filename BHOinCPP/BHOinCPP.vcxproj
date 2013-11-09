@@ -169,6 +169,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ExtensionRegister\ExtStatus.cpp" />
     <ClCompile Include="..\ExtensionRegister\IeManifestParser.cpp" />
     <ClCompile Include="Cathelp.cpp" />
     <ClCompile Include="ClassFactory.cpp" />
@@ -183,6 +184,7 @@
     <None Include="dll.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ExtensionRegister\ExtStatus.h" />
     <ClInclude Include="..\ExtensionRegister\IeManifestParser.h" />
     <ClInclude Include="..\ExtensionRegister\Util.h" />
     <ClInclude Include="Cathelp.h" />

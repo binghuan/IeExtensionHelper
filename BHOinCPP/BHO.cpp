@@ -19,9 +19,6 @@ CEentSink *EventSink4BHO;
 
 const IID CBHO::SupportedIIDs[]={IID_IUnknown,IID_IObjectWithSite};
 
-LPVOID m_pViewMMFFile;
-HANDLE m_hFileMMF;
-
 CBHO::CBHO(IeExtBHOInfo ieExtBhoInfo, IeExtContentScriptInfo ieExtContentScriptInfo) : CUnknown<IObjectWithSite>(SupportedIIDs,2)
 {
 	adviseCookie=0;
@@ -34,33 +31,17 @@ CBHO::CBHO(IeExtBHOInfo ieExtBhoInfo, IeExtContentScriptInfo ieExtContentScriptI
 	EventSink4BHO = new CEentSink(IE_EXT_COMPONENT_BHO);
 
 	m_IeExtBHOInfo = ieExtBhoInfo;
-	//tabMgr = new TabManager(ieExtBhoInfo.extenionID);
 
-	//Creation and Mapping of Memory Mapped File
-	m_hFileMMF = CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,SHARE_VARIABLE_SIZE,L"MyMMF");              
-	DWORD dwError = GetLastError();
-	if ( ! m_hFileMMF )
-	{
-		MessageBox(NULL,  _T("Creation of file mapping failed"), _T("Error"), MB_OK);
+	extStatusBHO = new ExtStatus(m_IeExtBHOInfo.extenionID);
+
+	/*
+	boolean isTrue = extStatusBHO->isPopoverVisible();
+	if(isTrue == TRUE) {
+		MessageBox(NULL, _T("isPopoverVisible: true"), _T("Information"), MB_OK);
+	} else {
+		MessageBox(NULL, _T("isPopoverVisible: false"), _T("Information"), MB_OK);
 	}
-	else
-	{
-		m_pViewMMFFile = MapViewOfFile(m_hFileMMF,FILE_MAP_ALL_ACCESS,0,0,0);                         // map all file
-
-		if(! m_pViewMMFFile )
-		{
-			MessageBox(NULL,  _T("MapViewOfFile function failed"), _T("Error"), MB_OK);
-		}
-	} 
-
-	if(m_pViewMMFFile)
-	{
-		_TCHAR *buff = new _TCHAR[MAX_PATH];
-		lstrcpy(buff, (LPCTSTR) m_pViewMMFFile);
-		//MessageBox(NULL, buff, _T("Error"), MB_OK);
-	}
-
-	
+	*/
 }
 
 CBHO::~CBHO()

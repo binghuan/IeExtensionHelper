@@ -11,17 +11,16 @@
 #include <shlwapi.h>
 
 #include <ctime>
-
-#include "common.h"
 #include "Util.h"
 #include "IeManifestParser.h"
 
+#include "ExtStatus.h"
 
 using namespace Json;
 using namespace std;
 
-CLSID CLSID_IE_BHO;
-CLSID CLSID_IE_TOOBAR;
+LPVOID m_pViewMMFFile;
+HANDLE m_hFileMMF;
 
 int _tmain(int argc, const _TCHAR* argv[])
 {
@@ -30,10 +29,10 @@ int _tmain(int argc, const _TCHAR* argv[])
 	IeExtToolbarButtonInfo toolbarButtonInfo = parser->getIeExtToolbarButtonInfo();
 	IeExtContentScriptInfo contentScriptInfo = parser->getIeExtContentScriptInfo();
 
-	printf("seed: %d\r\n",  rand()*10000);
-	printf("seed: %d\r\n",  rand()*10000);
-	printf("seed: %d\r\n",  rand()*10000);
-	printf("seed: %d\r\n",  rand()*10000);
+	ExtStatus *extStatus = new ExtStatus(parser->m_IeExtensionID);
+	extStatus->isPopoverVisible();
+
+	extStatus->setPopoverVisible(true);
 
 	Util::wait();
 	return 0;

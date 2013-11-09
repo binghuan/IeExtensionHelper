@@ -51,6 +51,9 @@
     <ClCompile Include="..\ExtensionRegister\IeManifestParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\ExtensionRegister\ExtStatus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="dll.def">
@@ -116,6 +119,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventNotifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ExtensionRegister\ExtStatus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

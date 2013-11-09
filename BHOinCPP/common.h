@@ -34,11 +34,6 @@ extern CComPtr<IWebBrowser2> m_IWebBrowser2Popover;
 
 #define IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED true
 
-#define SHARE_VARIABLE_SIZE 8192
-
-extern LPVOID m_pViewMMFFile;
-extern HANDLE m_hFileMMF;
-
 #define IE_EXT_EVENT_POPOVER L"onIeExtensionEventPopover"
 #define IE_EXT_EVENT_TAB_INACTIVATE L"onIeExtensionEventTabInactivate"
 #define IE_EXT_EVENT_TAB_ACTIVATE L"onIeExtensionEventTabActivate"
