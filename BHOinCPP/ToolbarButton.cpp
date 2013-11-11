@@ -155,7 +155,12 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		else 
 		{
 			_tprintf(_T("PopupWindow is inactive"));
-			ShowWindow(hwnd, SW_HIDE);
+			if(m_IeExtToolbarButtonInfo.debug == TRUE) {
+				_tprintf(_T("do not close PopupWindow in debug mode"));
+			} else {
+				ShowWindow(hwnd, SW_HIDE);
+			}
+			
 			extStatus->setPopoverVisible(false);
 		}
 		break ;

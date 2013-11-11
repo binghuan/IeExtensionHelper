@@ -32,6 +32,7 @@ struct IeExtToolbarButtonInfo{
 	_TCHAR* iconPath;
 	int popupWidth;
 	int popupHeight;
+	boolean debug;
 	string extenionID;
 	boolean isInitialized;
 } ;

@@ -110,6 +110,15 @@ IeExtToolbarButtonInfo IeManifestParser::getIeExtToolbarButtonInfo()
 
 	Value extToolbarButton = m_manifestRoot.get("browser_action", NULL);
 	if(extToolbarButton != NULL) {
+
+		Value debugMode = extToolbarButton.get("debug", NULL);
+		if(debugMode == NULL) {
+			info.debug = false;
+		} else {
+			info.debug = debugMode.asBool();
+		}
+		printf("extBackground Debug:%d\r\n", info.debug);
+
 		Value extDefaultPopup = extToolbarButton.get("default_popup", NULL);
 		printf(("extDefaultPopup page: %s\r\n"), extDefaultPopup);
 		char *tempStr = const_cast<char* > (extDefaultPopup.asCString());
