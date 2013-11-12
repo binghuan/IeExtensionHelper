@@ -7,7 +7,7 @@
     </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WebBrowserDebugger</DebuggerFlavor>
     <WebBrowserDebuggerDebuggerType>Auto</WebBrowserDebuggerDebuggerType>
-    <WebBrowserDebuggerHttpUrl>about:blank</WebBrowserDebuggerHttpUrl>
+    <WebBrowserDebuggerHttpUrl>http://127.0.0.1:8000/hello.html</WebBrowserDebuggerHttpUrl>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
     <LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
   </PropertyGroup>

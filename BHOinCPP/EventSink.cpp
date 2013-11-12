@@ -179,7 +179,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 					
 	if((componentID == IE_EXT_COMPONENT_CONTENTSCRIPT) &&
 		(m_IeExtContentScriptInfo.isDefined == true)
-		&& false
+		//&& false
 		) {
 
 		CComQIPtr<IHTMLWindow2> pWindow;	

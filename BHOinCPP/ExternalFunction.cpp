@@ -72,6 +72,9 @@ void CppCall()
 	MessageBox(NULL, L"You call external messagebox", L"Oh My god", 0);
 }
 
+
+int m_TabID = 99999999;
+
 HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _In_ REFIID riid, _In_ LCID lcid, _In_ WORD wFlags, _In_ DISPPARAMS *pDispParams, _Out_opt_ VARIANT *pVarResult, _Out_opt_ EXCEPINFO *pExcepInfo, _Out_opt_ UINT *puArgErr )
 {
 	HRESULT hr = S_OK;
@@ -125,7 +128,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			{
 				VariantInit(pVarResult);
 				V_VT(pVarResult)=VT_INT;
-				V_INT(pVarResult) = 99999999;
+				V_INT(pVarResult) = m_TabID;
 			}
 		}
 		
@@ -140,6 +143,38 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
 			CComBSTR bstrMember = _T("onMessageReceiveFromContentScript");
 			DISPID dispid;
+
+			if (SUCCEEDED(hr))  
+			{  
+				CComQIPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
+				VARIANT vEmpty = {0};
+
+				TCHAR *tabIDStr = new TCHAR[MAX_PATH];
+				ZeroMemory(tabIDStr, MAX_PATH);
+				swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
+
+				wstring script ;
+				script = L"onMessageReceiveFromContentScript(";
+
+				script += L"{";
+				script += L"name:'";
+				script += pDispParams->rgvarg[1].bstrVal;
+				script += L"', tabId:";
+				script += tabIDStr;
+				script += L", data:";
+				script += L"'";
+				script += pDispParams->rgvarg[0].bstrVal;
+				script += L"'";
+				script += L"}";
+				script += L");";
+
+				CComBSTR bstrScript(script.c_str());
+				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+			}  
+
+			/*
 			m_pDocument->get_Script(&m_pScript);
 			if(m_pScript!=NULL)  
 			{  
@@ -147,6 +182,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 				if (SUCCEEDED(hr))  
 				{  
 					DISPPARAMS dispparams;  
+					
 					memset(&dispparams, 0, sizeof(DISPPARAMS));  
 					dispparams.cArgs = 0;  
 					dispparams.cNamedArgs = 0;  
@@ -158,22 +194,22 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 					UINT nArgErr = (UINT)-1;  
 					hr = m_pScript->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
 				}  
-			}
+			}*/
+			
 		}
 		break;
 	case DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT:
 		{
-			CComPtr<IDispatch>   pHtmlDocDispatch;  
+
 			CComPtr<IHTMLDocument2>   m_pDocument;  
 			CComPtr<IDispatch>   m_pScript;  
 			HRESULT hr = m_IWebBrowser2ContentScript->get_Document((IDispatch**)&m_pDocument);
 
-			CComQIPtr<IHTMLWindow2> pWindow;
-			//m_pDocument->get_parentWindow(&pWindow);
-
 			m_pDocument->get_Script(&m_pScript);  
 
+
 			VARIANT extensionObj;
+			VariantInit(&extensionObj);
 			char* tempStr = const_cast<char*>(m_IeExtContentScriptInfo.extenionID.c_str());
 			_TCHAR* propertyName = new _TCHAR[MAX_PATH];
 			Util::AnsiToUnicode16(tempStr, propertyName, MAX_PATH);
@@ -183,21 +219,30 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			CComBSTR bstrMember = _T("onMessageReceiveFromBackground");
 			DISPID dispid;
 
-				hr = extensionObj.pdispVal->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
-				if (SUCCEEDED(hr))  
-				{  
-					DISPPARAMS dispparams;  
-					memset(&dispparams, 0, sizeof(DISPPARAMS));  
-					dispparams.cArgs = 0;  
-					dispparams.cNamedArgs = 0;  
+			hr = extensionObj.pdispVal->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
+			if (SUCCEEDED(hr))  
+			{  
+				CComQIPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
+				VARIANT vEmpty = {0};
 
-					EXCEPINFO excepInfo;  
-					memset(&excepInfo, 0, sizeof(EXCEPINFO));  
-					CComVariant vaResult;  
-					// initialize to invalid arg  
-					UINT nArgErr = (UINT)-1;  
-					hr = extensionObj.pdispVal->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
-				}  
+				wstring script ;
+				script = L"onMessageReceiveFromBackground(";
+				
+				script += L"{";
+				script += L"name:'";
+				script += pDispParams->rgvarg[1].bstrVal;
+				script += L"', message:";
+				script += L"'";
+				script += pDispParams->rgvarg[0].bstrVal;
+				script += L"'";
+				script += L"}";
+				script += L");";
+				
+				CComBSTR bstrScript(script.c_str());
+				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+			}  
 		}
 		break;
 	case DISPID_GET_BACKGROUND_PAGE:
