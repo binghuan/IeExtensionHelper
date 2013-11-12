@@ -193,7 +193,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			CComPtr<IHTMLDocument2>   m_pDocument;  
 			CComPtr<IDispatch>   m_pScript;  
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
-			CComBSTR bstrMember = _T("onMessageReceiveFromContentScript");
+			CComBSTR bstrMember = _T("onIeExtensionMsgBackgroundReceive");
 
 			if (SUCCEEDED(hr))  
 			{  
@@ -207,7 +207,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
 
 				wstring script ;
-				script = L"onMessageReceiveFromContentScript(";
+				script = L"onIeExtensionMsgBackgroundReceive(";
 
 				script += L"{";
 				script += L"name:'";
@@ -267,7 +267,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 
 			hr = Util::GetProperty(m_pScript, propertyName, &extensionObj);
 
-			CComBSTR bstrMember = _T("onMessageReceiveFromBackground");
+			CComBSTR bstrMember = _T("onIeExtensionMsgContentScriptReceive");
 			DISPID dispid;
 
 			hr = extensionObj.pdispVal->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
@@ -279,7 +279,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				VARIANT vEmpty = {0};
 
 				wstring script ;
-				script = L"onMessageReceiveFromBackground(";
+				script = L"onIeExtensionMsgContentScriptReceive(";
 				
 				script += L"{";
 				script += L"name:'";

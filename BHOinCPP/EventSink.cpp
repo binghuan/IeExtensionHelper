@@ -204,7 +204,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
 			contentString += "return {";
-			contentString += "onMessageReceiveFromBackground: function() { if(this.hasOwnProperty(\"onMessageReceiveFromBackground\") === true ) { return onMessageReceiveFromBackground();}else{console.warn(\"IeExtAPI: no implement- onMessageReceiveFromBackground\")} }";
+			contentString += "onIeExtensionMsgContentScriptReceive: function() { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive();}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
 			contentString += "};";
 			contentString += "})();";
 		}
