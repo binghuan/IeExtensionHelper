@@ -139,7 +139,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 		if(extFun) {
 			spCustomDoc->SetUIHandler(extFun);
 		} else {
-			bool notgood = true;
+			//bool notgood = true;
 		}
 	} 
 	// BH_Lin@20131014	----------------------------------------<
@@ -178,7 +178,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 	// purpose: inject content script.
 					
 	if((componentID == IE_EXT_COMPONENT_CONTENTSCRIPT) &&
-		(m_IeExtContentScriptInfo.isDefined == true)
+		(m_IeExtContentScriptInfo.isDefined == TRUE)
 		//&& false
 		) {
 

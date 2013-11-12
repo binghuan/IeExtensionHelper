@@ -94,18 +94,39 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::GetExternal( _Outptr_result_maybenull_ I
 	*/
 }
 
-HRESULT STDMETHODCALLTYPE DocUIHandler::ShowContextMenu( _In_ DWORD dwID, _In_ POINT *ppt, _In_ IUnknown *pcmdtReserved, _In_ IDispatch *pdispReserved )
+HRESULT STDMETHODCALLTYPE DocUIHandler::ShowContextMenu( _In_ DWORD dwID, 
+														_In_ POINT *ppt, 
+														_In_ IUnknown *pcmdtReserved, 
+														_In_ IDispatch *pdispReserved )
 {
+	UNREFERENCED_PARAMETER(dwID);
+	UNREFERENCED_PARAMETER(ppt);
+	UNREFERENCED_PARAMETER(pcmdtReserved);
+	UNREFERENCED_PARAMETER(pdispReserved);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::GetHostInfo( _Inout_ DOCHOSTUIINFO *pInfo )
 {
+	UNREFERENCED_PARAMETER(pInfo);
+
 	return E_NOINTERFACE;
 }
 
-HRESULT STDMETHODCALLTYPE DocUIHandler::ShowUI( _In_ DWORD dwID, _In_ IOleInPlaceActiveObject *pActiveObject, _In_ IOleCommandTarget *pCommandTarget, _In_ IOleInPlaceFrame *pFrame, _In_ IOleInPlaceUIWindow *pDoc )
+HRESULT STDMETHODCALLTYPE DocUIHandler::ShowUI( _In_ DWORD dwID, 
+											   _In_ IOleInPlaceActiveObject *pActiveObject, 
+											   _In_ IOleCommandTarget *pCommandTarget, 
+											   _In_ IOleInPlaceFrame *pFrame, 
+											   _In_ IOleInPlaceUIWindow *pDoc )
 {
+	UNREFERENCED_PARAMETER(dwID);
+	UNREFERENCED_PARAMETER(pActiveObject);
+	UNREFERENCED_PARAMETER(pCommandTarget);
+	UNREFERENCED_PARAMETER(pFrame);
+	UNREFERENCED_PARAMETER(pDoc);
+
+
 	return E_NOINTERFACE;
 }
 
@@ -121,26 +142,39 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::UpdateUI( void )
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::EnableModeless( BOOL fEnable )
 {
+	UNREFERENCED_PARAMETER(fEnable);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::OnDocWindowActivate( BOOL fActivate )
 {
+	UNREFERENCED_PARAMETER(fActivate);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::OnFrameWindowActivate( BOOL fActivate )
 {
+	UNREFERENCED_PARAMETER(fActivate);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::ResizeBorder( _In_ LPCRECT prcBorder, _In_ IOleInPlaceUIWindow *pUIWindow, _In_ BOOL fRameWindow )
 {
+	UNREFERENCED_PARAMETER(prcBorder);
+	UNREFERENCED_PARAMETER(pUIWindow);
+	UNREFERENCED_PARAMETER(fRameWindow);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::TranslateAccelerator( LPMSG lpMsg, const GUID *pguidCmdGroup, DWORD nCmdID )
 {
+	UNREFERENCED_PARAMETER(pguidCmdGroup);
+	UNREFERENCED_PARAMETER(nCmdID);
+
 	HRESULT hr = S_FALSE;
 
 	if (lpMsg && lpMsg->message == WM_KEYDOWN && lpMsg->wParam == VK_TAB) {
@@ -152,21 +186,34 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::TranslateAccelerator( LPMSG lpMsg, const
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::GetOptionKeyPath( _Out_ LPOLESTR *pchKey, DWORD dw )
 {
+	UNREFERENCED_PARAMETER(pchKey);
+	UNREFERENCED_PARAMETER(dw);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::GetDropTarget( _In_ IDropTarget *pDropTarget, _Outptr_ IDropTarget **ppDropTarget )
 {
+	UNREFERENCED_PARAMETER(pDropTarget);
+	UNREFERENCED_PARAMETER(ppDropTarget);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::TranslateUrl( DWORD dwTranslate, _In_ LPWSTR pchURLIn, _Outptr_ LPWSTR *ppchURLOut )
 {
+	UNREFERENCED_PARAMETER(dwTranslate);
+	UNREFERENCED_PARAMETER(pchURLIn);
+	UNREFERENCED_PARAMETER(ppchURLOut);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::FilterDataObject( _In_ IDataObject *pDO, _Outptr_result_maybenull_ IDataObject **ppDORet )
 {
+	UNREFERENCED_PARAMETER(pDO);
+	UNREFERENCED_PARAMETER(ppDORet);
+
 	return E_NOINTERFACE;
 }
 

@@ -26,7 +26,7 @@ HRESULT CreateComponentCategory(CATID catid, WCHAR* catDescription)
 	int len = wcslen(catDescription);
 	if (len>127)
 		len = 127;
-	wcsncpy(catinfo.szDescription, catDescription, len);
+	wcsncpy_s(catinfo.szDescription, catDescription, len);
 	// Make sure the description is null terminated
 	catinfo.szDescription[len] = '\0';
 

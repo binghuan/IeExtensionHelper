@@ -21,11 +21,17 @@ ExternalFunction::~ExternalFunction(void)
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfoCount( __RPC__out UINT *pctinfo )
 {
+	UNREFERENCED_PARAMETER(pctinfo);
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid, __RPC__deref_out_opt ITypeInfo **ppTInfo )
 {
+	UNREFERENCED_PARAMETER(iTInfo);
+	UNREFERENCED_PARAMETER(lcid);
+	UNREFERENCED_PARAMETER(ppTInfo);
+
 	return E_NOINTERFACE;
 }
 
@@ -40,8 +46,18 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 
 #define DISPID_IS_POPOVER_VISIBLE 123007
 
-HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( __RPC__in REFIID riid, __RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, __RPC__in_range(0,16384) UINT cNames, LCID lcid, __RPC__out_ecount_full(cNames) DISPID *rgDispId )
+HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
+	__RPC__in REFIID riid, 
+	__RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, 
+	__RPC__in_range(0,16384) UINT cNames, 
+	LCID lcid, 
+	__RPC__out_ecount_full(cNames) DISPID *rgDispId )
 {
+	UNREFERENCED_PARAMETER(cNames);
+	UNREFERENCED_PARAMETER(lcid);
+	UNREFERENCED_PARAMETER(riid);
+
+
 	HRESULT hr = NOERROR;
 
 	if(lstrcmp(rgszNames[0], L"messagebox")==0){
@@ -75,8 +91,21 @@ void CppCall()
 
 int m_TabID = 99999999;
 
-HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _In_ REFIID riid, _In_ LCID lcid, _In_ WORD wFlags, _In_ DISPPARAMS *pDispParams, _Out_opt_ VARIANT *pVarResult, _Out_opt_ EXCEPINFO *pExcepInfo, _Out_opt_ UINT *puArgErr )
+HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, 
+												   _In_ REFIID riid, 
+												   _In_ LCID lcid, 
+												   _In_ WORD wFlags, 
+												   _In_ DISPPARAMS *pDispParams, 
+												   _Out_opt_ VARIANT *pVarResult, 
+												   _Out_opt_ EXCEPINFO *pExcepInfo, 
+												   _Out_opt_ UINT *puArgErr )
 {
+	UNREFERENCED_PARAMETER(lcid);
+	UNREFERENCED_PARAMETER(pExcepInfo);
+	UNREFERENCED_PARAMETER(puArgErr);
+	UNREFERENCED_PARAMETER(riid);
+	UNREFERENCED_PARAMETER(wFlags);
+
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
@@ -120,15 +149,17 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			CComPtr<IHTMLDocument2>   m_pDocument;  
 			CComPtr<IDispatch>   m_pScript;  
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
-			CComPtr<IHTMLWindow2> pWindow;	
-			m_pDocument->get_parentWindow(&pWindow);
-			CComBSTR bstrLanguage = _T("javascript");
+			if(SUCCEEDED(hr)) {
+				CComPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
 
-			if(pVarResult != NULL)
-			{
-				VariantInit(pVarResult);
-				V_VT(pVarResult)=VT_INT;
-				V_INT(pVarResult) = m_TabID;
+				if(pVarResult != NULL)
+				{
+					VariantInit(pVarResult);
+					V_VT(pVarResult)=VT_INT;
+					V_INT(pVarResult) = m_TabID;
+				}
 			}
 		}
 		
@@ -142,7 +173,6 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			CComPtr<IDispatch>   m_pScript;  
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
 			CComBSTR bstrMember = _T("onMessageReceiveFromContentScript");
-			DISPID dispid;
 
 			if (SUCCEEDED(hr))  
 			{  
@@ -252,13 +282,15 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, _I
 			CComPtr<IHTMLDocument2>   m_pDocument;  
 			CComPtr<IDispatch>   m_pScript;  
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
-			CComPtr<IHTMLWindow2> pWindow;	
-			m_pDocument->get_parentWindow(&pWindow);
-			CComBSTR bstrLanguage = _T("javascript");
+			if(SUCCEEDED(hr)) {
+				CComPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
 
-			//pVarResult = pWindow;
-			pVarResult->vt = VT_DISPATCH;
-			pVarResult->pdispVal = (IDispatch *)pWindow;
+				//pVarResult = pWindow;
+				pVarResult->vt = VT_DISPATCH;
+				pVarResult->pdispVal = (IDispatch *)pWindow;
+			}
 		}
 		break;
 	default:
@@ -288,10 +320,10 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::QueryInterface( REFIID riid, void **
 
 ULONG STDMETHODCALLTYPE ExternalFunction::AddRef( void )
 {
-	return E_NOINTERFACE;
+	return 1;
 }
 
 ULONG STDMETHODCALLTYPE ExternalFunction::Release( void )
 {
-	return E_NOINTERFACE;
+	return 1;
 }

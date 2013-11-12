@@ -77,7 +77,7 @@ public:
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		while (length-- > 0) {
-			size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
+			size_t index = (size_t) rand() / RAND_MAX * (sizeof charset - 1);
 			*dest++ = charset[index];
 		}
 		*dest = '\0';

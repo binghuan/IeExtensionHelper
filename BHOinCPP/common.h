@@ -6,8 +6,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#define _WIN32_WINNT 0x0600
-
 #include <windows.h>
 #include <tchar.h>
 #include <atlcomcli.h>

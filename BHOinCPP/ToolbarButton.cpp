@@ -136,7 +136,7 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		{
 			if(wParam == TRUE) {
 				_tprintf(_T("PopupWindow is visible"));
-				if(m_IsPopoverInitialized == true) {
+				if(m_IsPopoverInitialized == TRUE) {
 					SendMessageTimeout(g_PopupHwnd, WM_SP_POPOVER, 0, 0, SMTO_ABORTIFHUNG, 500, NULL);	
 				} 
 				m_IsPopoverInitialized = true;
@@ -219,7 +219,7 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 	//CreateThread(0, NULL, ThreadProc, (LPVOID)L"Popover Page", NULL, NULL);
 	//ThreadProc((LPVOID)L"Popover Page");// BH_Lin@20131014
 
-	BOOL result = FALSE;
+	BOOL result = TRUE;
 	MSG messages;
 	//HMENU hMenu = CreateDLLWindowMenu();
 	g_PopupInstance = hModule;
@@ -298,20 +298,17 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 
 	
 	
-	return TRUE;	
-}
-
-//The new thread
-DWORD WINAPI ThreadProc( LPVOID lpParam ) {
-
-	RegisterAndCreateWindow(hInstance);
-
-	return 0;
+	return result;	
 }
 
 STDMETHODIMP CToolbarButton::Exec( const GUID *pguidCmdGroup, DWORD nCmdID, DWORD nCmdExecOpt, VARIANTARG *pvaIn, VARIANTARG *pvaOut )
 {
-	//CreateThread(0, NULL, ThreadProc, NULL, NULL, NULL);
+
+	UNREFERENCED_PARAMETER(pguidCmdGroup);
+	UNREFERENCED_PARAMETER(nCmdID);
+	UNREFERENCED_PARAMETER(nCmdExecOpt);
+	UNREFERENCED_PARAMETER(pvaIn);
+	UNREFERENCED_PARAMETER(pvaOut);
 
 	RegisterAndCreateWindow(hInstance);
 
@@ -320,6 +317,11 @@ STDMETHODIMP CToolbarButton::Exec( const GUID *pguidCmdGroup, DWORD nCmdID, DWOR
 
 STDMETHODIMP CToolbarButton::QueryStatus( const GUID *pguidCmdGroup, ULONG cCmds, OLECMD *prgCmds, OLECMDTEXT *pCmdText )
 {
+	UNREFERENCED_PARAMETER(pguidCmdGroup);
+	UNREFERENCED_PARAMETER(cCmds);
+	UNREFERENCED_PARAMETER(prgCmds);
+	UNREFERENCED_PARAMETER(pCmdText);
+
 	return S_OK;
 }
 

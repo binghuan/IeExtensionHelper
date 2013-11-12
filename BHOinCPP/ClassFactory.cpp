@@ -45,7 +45,7 @@ STDMETHODIMP CClassFactory::CreateInstance(IUnknown *pUnkOuter,REFIID riid,void 
 	// Set *ppvObject to NULL
 	(*ppvObject)=NULL;
 
-	if(m_IeExtBHOInfo.isDefined == true && IsEqualCLSID(m_clsid,m_IeExtBHOInfo.clsid) == true ) {
+	if(m_IeExtBHOInfo.isDefined == TRUE && IsEqualCLSID(m_clsid,m_IeExtBHOInfo.clsid) == TRUE ) {
 		// We only support creating the CObjectWithSite object, which is our implementation of the IObjectWithSite interface through which Internet Explorer will access the BHO.
 		CBHO* pObject=new CBHO(m_IeExtBHOInfo, m_IeExtContentScriptInfo);
 		// If we couldn't allocate a new CObjectWithSite object, return an out-of-memory error.
@@ -55,7 +55,7 @@ STDMETHODIMP CClassFactory::CreateInstance(IUnknown *pUnkOuter,REFIID riid,void 
 		// If the requested interface is not supported by pObject, it will return an error. In that case, delete the newly created object.
 		if(FAILED(hr)) delete pObject;
 		// Return the same HRESULT as CObjectWithSite::QueryInterface
-	} else if( m_IeExtToolbarButtonInfo.isDefined == true && IsEqualCLSID(m_clsid,m_IeExtToolbarButtonInfo.clsid) == true ) {
+	} else if( m_IeExtToolbarButtonInfo.isDefined == TRUE && IsEqualCLSID(m_clsid,m_IeExtToolbarButtonInfo.clsid) == TRUE ) {
 		// We only support creating the CObjectWithSite object, which is our implementation of the IObjectWithSite interface through which Internet Explorer will access the BHO.
 		CToolbarButton* pObject=new CToolbarButton(m_IeExtToolbarButtonInfo);
 		// If we couldn't allocate a new CObjectWithSite object, return an out-of-memory error.

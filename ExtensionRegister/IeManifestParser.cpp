@@ -13,7 +13,8 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 	wprintf_s(_T("fileFolderPath:%s\n"),m_fileFolderPath.c_str());
 
 	m_IeManifestFilePath = m_fileFolderPath;
-	m_IeManifestFilePath+= L"\\msiemanifest.json";
+	//m_IeManifestFilePath+= L"\\msiemanifest.json";
+	m_IeManifestFilePath+= L"\\msiemanifest3.json";
 
 	char *fileContent =  Util::readInputFile(m_IeManifestFilePath);
 
@@ -21,7 +22,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 
 	Json::Features features;
 	Reader reader(features);
-	bool parsingSuccessful = reader.parse(fileContent, m_manifestRoot);
+	reader.parse(fileContent, m_manifestRoot);
 
 	Value extId = m_manifestRoot.get("extension_id", NULL);
 	if(extId == NULL) {
@@ -175,14 +176,6 @@ IeExtContentScriptInfo IeManifestParser::getIeExtContentScriptInfo()
 			Util::AnsiToUnicode16(tempStr, buff, MAX_PATH);
 			wstring scrpitPath = buff;
 			info.javascriptsAtEnd.push_back(scrpitPath);
-		}
-
-		// verify it again.
-		for(int j=0; j< info.javascriptsAtEnd.size(); j++) {
-
-
-			wprintf_s(_T("END_SCRIPT - %s\r\n"), info.javascriptsAtEnd[j].c_str());
-			//char *scriptBuff = Util::readInputFile(info.javascriptsAtEnd[j]);
 		}
 
 		Value extId = m_manifestRoot.get("extension_id", NULL);

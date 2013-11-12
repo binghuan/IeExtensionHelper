@@ -21,7 +21,7 @@ ExtStatus::ExtStatus(string extensionID )
 	DWORD dwError = GetLastError();
 	if ( ! m_hFileMMF )
 	{
-		printf("Creation of file mapping failed");
+		printf("Creation of file mapping failed: %d", dwError);
 	}
 	else
 	{
@@ -59,8 +59,7 @@ void ExtStatus::retrieveExtStatus()
 
 		Features features;
 		Reader reader(features);
-		bool parsingSuccessful = reader.parse(m_ValueBuffer, m_manifestRoot);
-
+		reader.parse(m_ValueBuffer, m_manifestRoot);
 	}
 }
 
