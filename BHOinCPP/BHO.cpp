@@ -71,8 +71,7 @@ STDMETHODIMP CBHO::SetSite(IUnknown *pUnkSite)
 		hr = m_axWnd.AttachControl(m_IWebBrowser2BHO, &pUnk);
 		hr = m_IWebBrowser2BHO->put_Silent(VARIANT_TRUE);
 
-		if(m_IeExtBHOInfo.debug == true) {
-		//if(true) {
+		if(m_IeExtBHOInfo.debug == TRUE) {
 			m_axWnd.MoveWindow(0, 0, 800, 600);
 			m_axWnd.ShowWindowAsync(SW_SHOW);
 		}

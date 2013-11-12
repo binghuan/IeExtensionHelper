@@ -184,7 +184,10 @@ IeExtContentScriptInfo IeManifestParser::getIeExtContentScriptInfo()
 		info.isDefined = true;
 
 	} else {
-		info.isDefined = false;
+
+		// BH_Lin@20131112
+		// if the user does not want to inject contentScript, the component must be registered to host BHO.
+		info.isDefined = true;
 	}
 
 

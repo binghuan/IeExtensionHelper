@@ -46,6 +46,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 
 #define DISPID_IS_POPOVER_VISIBLE 123007
 
+#define DISPID_EXECUTE_SCRIPT_IN_TAB 123008
+
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
 	__RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, 
@@ -75,6 +77,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_OPEN_NEW_TAB;
 	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
 		*rgDispId = DISPID_IS_POPOVER_VISIBLE;
+	} else if(lstrcmp(rgszNames[0], L"executeScriptInTab")==0){
+		*rgDispId = DISPID_EXECUTE_SCRIPT_IN_TAB;
 	} else {
 		*rgDispId = DISP_E_UNKNOWNNAME;
 		hr = ResultFromScode(DISP_E_UNKNOWNNAME);
@@ -109,6 +113,23 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
+	case DISPID_EXECUTE_SCRIPT_IN_TAB:
+		{
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2ContentScript->get_Document((IDispatch**)&m_pDocument);
+
+			if(SUCCEEDED(hr)) {
+				CComQIPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
+				VARIANT vEmpty = {0};
+				CComBSTR bstrScript(pDispParams->rgvarg[0].bstrVal);
+				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+			}
+		}
+		break;
 	case DISPID_IS_POPOVER_VISIBLE:
 		{
 			if(pVarResult != NULL)
