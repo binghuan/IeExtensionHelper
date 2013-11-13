@@ -13,8 +13,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 	wprintf_s(_T("fileFolderPath:%s\n"),m_fileFolderPath.c_str());
 
 	m_IeManifestFilePath = m_fileFolderPath;
-	//m_IeManifestFilePath+= L"\\msiemanifest.json";
-	m_IeManifestFilePath+= L"\\msiemanifest6.json";
+	m_IeManifestFilePath+= L"\\msiemanifest.json";
 
 	char *fileContent =  Util::readInputFile(m_IeManifestFilePath);
 
