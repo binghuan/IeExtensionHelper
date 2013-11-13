@@ -14,7 +14,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 
 	m_IeManifestFilePath = m_fileFolderPath;
 	//m_IeManifestFilePath+= L"\\msiemanifest.json";
-	m_IeManifestFilePath+= L"\\msiemanifest3.json";
+	m_IeManifestFilePath+= L"\\msiemanifest6.json";
 
 	char *fileContent =  Util::readInputFile(m_IeManifestFilePath);
 
@@ -25,6 +25,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 	reader.parse(fileContent, m_manifestRoot);
 
 	Value extId = m_manifestRoot.get("extension_id", NULL);
+	/*
 	if(extId == NULL) {
 		char *randomID = new char[10];
 		Util::rand_str(randomID, 10);
@@ -39,6 +40,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 
 		extId = m_manifestRoot.get("extension_id", NULL);
 	}
+	*/
 
 	m_IeExtensionID = const_cast<char* > (extId.asCString());
 }

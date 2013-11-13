@@ -1,11 +1,12 @@
 {
    "background" : {
-	"debug" : true,
+	"debug" : false,
 	"clsid" : "{0CA63DE6-4947-4096-959C-002FEB7C2F90}",
 	"name" : "BH_BHO",
    "page" : "http://127.0.0.1:8000/hello.html"
    },
    "browser_action" : {
+	  "debug" : false,
       "clsid" : "{25F07CA0-787A-4770-B329-941EB72FDA05}",
       "default_icon" : "data/images/Icon-16.png",
       "default_popup" : "http://127.0.0.1:8000/hello.html",
