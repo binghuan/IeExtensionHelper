@@ -20,9 +20,11 @@ public:
 
 	boolean isPopoverVisible();
 	void setPopoverVisible(boolean);
+	void setActiveTabInfo(int tabId, wstring title, wstring url);
+	TCHAR* getActiveTabInfo();
 
 	void retrieveExtStatus();
-	void commitChange(string changedValue);
+	void commitChange();
 
 private:
 	TCHAR* m_ExtensionID;

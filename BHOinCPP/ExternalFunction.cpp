@@ -199,7 +199,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 					tabStr += L"'";
 					tabStr += bstrUrl;
 					tabStr += L"',";
-					tabStr += L"tabId: ";
+					tabStr += L"id: ";
 					tabStr += tabIDStr;
 					tabStr += L"}";
 
@@ -226,9 +226,11 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 
 				if(pVarResult != NULL)
 				{
+					ExtStatus *extStatus = new ExtStatus(m_IeExtContentScriptInfo.extenionID);
+
 					VariantInit(pVarResult);
-					V_VT(pVarResult)=VT_INT;
-					V_INT(pVarResult) = m_TabID;
+					V_VT(pVarResult) = VT_BSTR;
+					V_BSTR(pVarResult) = SysAllocString(extStatus->getActiveTabInfo());
 				}
 			}
 		}

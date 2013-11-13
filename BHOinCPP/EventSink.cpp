@@ -24,6 +24,7 @@ CEentSink::CEentSink(int componentID)
 	switch(componentID) {
 	case IE_EXT_COMPONENT_CONTENTSCRIPT:
 		m_IeExtContentScriptInfo = manifestParser->getIeExtContentScriptInfo();
+		m_ExtStatus = new ExtStatus(m_IeExtContentScriptInfo.extenionID);
 		break;
 	case IE_EXT_COMPONENT_TOOLBARBUTTON:
 		m_IsPopoverInitialized = false;
@@ -313,28 +314,39 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 		{
 			// the tab state will be notified by IE to contentscript . 
 			// so , we pass the event to background BHO. 
+			if(m_componentID == IE_EXT_COMPONENT_CONTENTSCRIPT) {
+				if (pDispParams) {
+					DWORD dwMask  = pDispParams->rgvarg[0].lVal;
+					DWORD dwFlags = pDispParams->rgvarg[1].lVal;
 
-			if (pDispParams) {
-				DWORD dwMask  = pDispParams->rgvarg[0].lVal;
-				DWORD dwFlags = pDispParams->rgvarg[1].lVal;
+					// We only care about WINDOWSTATE_USERVISIBLE.
+					if (dwMask & OLECMDIDF_WINDOWSTATE_USERVISIBLE)
+					{
+						bool visible = !!(dwFlags & OLECMDIDF_WINDOWSTATE_USERVISIBLE);
 
-				// We only care about WINDOWSTATE_USERVISIBLE.
-				if (dwMask & OLECMDIDF_WINDOWSTATE_USERVISIBLE)
-				{
-					bool visible = !!(dwFlags & OLECMDIDF_WINDOWSTATE_USERVISIBLE);
+						// ... your code here ...
+						if(visible) {
+							_tprintf(TEXT("Tab is visible: %d"), m_componentID);
 
-					// ... your code here ...
-					if(visible) {
-						_tprintf(TEXT("Tab is visible: %d"), m_componentID);
-						if(m_IWebBrowser2BHO != NULL) {
-							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
+							CComBSTR bstrName;
+							CComBSTR bstrUrl;
+							m_IWebBrowser2ContentScript->get_LocationName(&bstrName);
+							m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
+
+							// need to implement dynamic tabID. 
+							m_ExtStatus->setActiveTabInfo( 99999999 , bstrName.m_str, bstrUrl.m_str);
+
+							if(m_IWebBrowser2BHO != NULL) {
+								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
+							}
+						} else {
+							_tprintf(TEXT("Tab is not visible: %d"), m_componentID);
+							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
 						}
-					} else {
-						_tprintf(TEXT("Tab is not visible: %d"), m_componentID);
-						EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
 					}
 				}
 			}
+			
 			break;
 		}
 	}

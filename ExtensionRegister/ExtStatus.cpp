@@ -60,13 +60,18 @@ void ExtStatus::retrieveExtStatus()
 		Features features;
 		Reader reader(features);
 		reader.parse(m_ValueBuffer, m_manifestRoot);
+
+		m_manifestRoot["isPopoverVisible"] = m_manifestRoot.get("isPopoverVisible", NULL);
+		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", NULL);
 	}
 }
 
-void ExtStatus::commitChange( string changedValue )
+void ExtStatus::commitChange()
 {
-	char *tempStr = const_cast<char* > (changedValue.c_str());
-	strcpy_s( (LPSTR) m_pViewMMFFile, SHARE_VARIABLE_SIZE,tempStr);
+	StyledWriter writer;
+	string resultJsonString = writer.write( m_manifestRoot );
+
+	strcpy_s( (LPSTR) m_pViewMMFFile, SHARE_VARIABLE_SIZE,resultJsonString.c_str());
 }
 
 boolean ExtStatus::isPopoverVisible() {
@@ -87,10 +92,51 @@ void ExtStatus::setPopoverVisible( boolean willVisible)
 	retrieveExtStatus();
 
 	m_manifestRoot["isPopoverVisible"] = willVisible;
-	StyledWriter writer;
-	string resultJsonString = writer.write( m_manifestRoot );
 
-	commitChange(resultJsonString);
+	commitChange();
+}
+
+void ExtStatus::setActiveTabInfo(int tabId, wstring title, wstring url)
+{
+	retrieveExtStatus();
+
+	TCHAR *tabIDStr = new TCHAR[MAX_PATH];
+	ZeroMemory(tabIDStr, MAX_PATH);
+	swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  tabId);
+
+	wstring infoStr = L"{";
+	infoStr += L"id:";
+	infoStr += tabIDStr;
+	infoStr += L",";
+	infoStr += L"title:'" + title;
+	infoStr += L"',";
+	infoStr += L"url:'" + url;
+	infoStr += L"'}";
+
+	int nIndex = WideCharToMultiByte(CP_ACP, 0, infoStr.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsi = new char[nIndex + 1];
+	WideCharToMultiByte(CP_ACP, 0, infoStr.c_str(), -1, pAnsi, nIndex, NULL, NULL);
+	//delete pAnsi;
+
+	m_manifestRoot["activeTab"] = pAnsi;
+	
+
+	commitChange();
+}
+
+TCHAR* ExtStatus::getActiveTabInfo()
+{
+	retrieveExtStatus();
+	_TCHAR* tabInfoStr = new _TCHAR[SHARE_VARIABLE_SIZE];
+
+	Value activeTabInfo = m_manifestRoot.get("activeTab", NULL);
+	if(activeTabInfo != NULL) {
+		char* tempStr = const_cast<char*>(activeTabInfo.asCString());	
+		Util::AnsiToUnicode16(tempStr, tabInfoStr, SHARE_VARIABLE_SIZE);
+	}
+
+	printf("getActiveTabInfo --> %s", tabInfoStr);
+	return tabInfoStr;
 }
 
 

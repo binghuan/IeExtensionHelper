@@ -4,6 +4,7 @@
 #include <Exdispid.h>
 #include "DocUIHandler.h"
 #include "..\ExtensionRegister\IeManifestParser.h"
+#include "..\ExtensionRegister\ExtStatus.h"
 
 // Note we don't derive from our implementation of CUnknown
 // This is because CEventSink always has only one instance, so we write a custom implementation of the IUnknown methods
@@ -28,6 +29,7 @@ public:
 	
 	IWebBrowser2 *m_IWebBrowser2;
 	DocUIHandler *extFun;
+	ExtStatus *m_ExtStatus;
 
 	void setContentScriptInfo(IeExtContentScriptInfo info);
 	void exportExternalFunction(int componentID);
