@@ -48,6 +48,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 
 #define DISPID_EXECUTE_SCRIPT_IN_TAB 123008
 
+#define DISPID_GET_SELF_TAB 123009
+
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
 	__RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, 
@@ -73,6 +75,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_GET_BACKGROUND_PAGE;
 	} else if(lstrcmp(rgszNames[0], L"getActiveTab")==0){
 		*rgDispId = DISPID_GET_ACTIVE_TAB;
+	} else if(lstrcmp(rgszNames[0], L"getSelfTab")==0){
+		*rgDispId = DISPID_GET_SELF_TAB;
 	} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
 		*rgDispId = DISPID_OPEN_NEW_TAB;
 	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
@@ -162,9 +166,54 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			CppCall();
 		}
 		break;
+	case DISPID_GET_SELF_TAB:
+		{
+			printf("DISPID_GET_SELF_TAB.\n");
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+			if(SUCCEEDED(hr)) {
+				CComPtr<IHTMLWindow2> pWindow;	
+				m_pDocument->get_parentWindow(&pWindow);
+				CComBSTR bstrLanguage = _T("javascript");
+
+				if(pVarResult != NULL)
+				{
+					CComBSTR bstrName;
+					CComBSTR bstrUrl;
+					m_IWebBrowser2ContentScript->get_LocationName(&bstrName);
+					m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
+
+					TCHAR *tabIDStr = new TCHAR[MAX_PATH];
+					ZeroMemory(tabIDStr, MAX_PATH);
+					swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
+					
+
+					wstring tabStr = L"{";
+					tabStr += L"title: ";
+					tabStr += L"'";
+					tabStr += bstrName;
+					tabStr += L"',";
+					tabStr += L"url: ";
+					tabStr += L"'";
+					tabStr += bstrUrl;
+					tabStr += L"',";
+					tabStr += L"tabId: ";
+					tabStr += tabIDStr;
+					tabStr += L"}";
+
+					VariantInit(pVarResult);
+					V_VT(pVarResult)=VT_BSTR;
+
+					CComBSTR returnObj = tabStr.c_str();
+					V_BSTR(pVarResult) = returnObj;
+				}
+			}
+		}
+		break;
 	case DISPID_GET_ACTIVE_TAB:
 		{
-		
 			printf("DISPID_GET_ACTIVE_TABID.\n");
 			CComPtr<IDispatch>   pHtmlDocDispatch;  
 			CComPtr<IHTMLDocument2>   m_pDocument;  
