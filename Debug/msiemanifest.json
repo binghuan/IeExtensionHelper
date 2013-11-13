@@ -19,10 +19,7 @@
    "content_scripts" : {
       "end" : {
          "scripts" : [
-            "C:\\Users\\binghuan\\Perforce\\bh_macbook13\\Consumer\\DirectPass\\Dev\\DirectPass-2.0\\DirectPass\\src\\Extension\\SafariExt_DirectPass.safariextension\\data\\lib\\jquery-1.10.1.min.js",
-            "C:\\Users\\binghuan\\Perforce\\bh_macbook13\\Consumer\\DirectPass\\Dev\\DirectPass-2.0\\DirectPass\\src\\Extension\\SafariExt_DirectPass.safariextension\\data\\lib\\utils.js",
-            "C:\\Users\\binghuan\\Perforce\\bh_macbook13\\Consumer\\DirectPass\\Dev\\DirectPass-2.0\\DirectPass\\src\\Extension\\SafariExt_DirectPass.safariextension\\data\\lib\\actionTable.js",
-            "C:\\Users\\binghuan\\Perforce\\bh_macbook13\\Consumer\\DirectPass\\Dev\\DirectPass-2.0\\DirectPass\\src\\Extension\\SafariExt_DirectPass.safariextension\\data\\content_script.js"
+            
          ]
       }
    },
@@ -33,13 +30,6 @@
    "default_locale" : "en",
    "description" : "__MSG_extDescription__",
    "extension_id" : "aDkQEysUQM",
-   "icons" : {
-      "128" : "data/images/Icon-48.png",
-      "16" : "data/images/Icon-16.png",
-      "48" : "data/images/Icon-48.png"
-   },
-   "manifest_version" : 2,
    "name" : "__MSG_extName__",
-   "permissions" : [ "tabs", "http://*/*", "https://*/*" ],
    "version" : "2.0"
 }
