@@ -113,6 +113,15 @@ void DisconnectEventSink(IWebBrowser2 *pSite)
 
 #define WM_SP_POPOVER	0x10001
 
+void reloadPopoverPage() {
+	VARIANT varMyURL;
+	VariantInit(&varMyURL);
+	varMyURL.vt = VT_BSTR;
+	varMyURL.bstrVal = SysAllocString(m_IeExtToolbarButtonInfo.page);
+	m_IWebBrowser2Popover-> Navigate2(&varMyURL,0,0,0,0);
+	VariantClear(&varMyURL);
+}
+
 //Our new windows proc
 LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -151,6 +160,11 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		{
 			_tprintf(_T("PopupWindow is active"));
 			extStatus->setPopoverVisible(true);
+			if(m_IeExtToolbarButtonInfo.debug == TRUE) {
+				_tprintf(_T("do not reload Popover page in debug mode"));
+			} else {
+				reloadPopoverPage();
+			}
 		}
 		else 
 		{
@@ -167,7 +181,7 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 	case WM_CREATE:
 		{
 			RECT rc;
-			VARIANT varMyURL;
+			
 			CAxWindow WinContainer;
 			LPOLESTR pszName=OLESTR("shell.Explorer.2");
 			GetClientRect(hwnd, &rc);
@@ -180,15 +194,11 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 				WinContainer.QueryControl(__uuidof(IWebBrowser2),(void**)&m_IWebBrowser2Popover);
 				m_IWebBrowser2Popover->put_Silent(VARIANT_TRUE);
 			}
-			VariantInit(&varMyURL);
-			varMyURL.vt = VT_BSTR;
-			varMyURL.bstrVal = SysAllocString(m_IeExtToolbarButtonInfo.page);
-			m_IWebBrowser2Popover-> Navigate2(&varMyURL,0,0,0,0);
-
 			// BH_Lin@20131014
 			ConnectEventSink(m_IWebBrowser2Popover);
 
-			VariantClear(&varMyURL);
+			reloadPopoverPage();
+
 		}
 		break;	
 	case WM_COMMAND:

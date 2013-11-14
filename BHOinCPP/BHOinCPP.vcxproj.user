@@ -7,7 +7,7 @@
     </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WebBrowserDebugger</DebuggerFlavor>
     <WebBrowserDebuggerDebuggerType>Auto</WebBrowserDebuggerDebuggerType>
-    <WebBrowserDebuggerHttpUrl>http://127.0.0.1:8000/hello.html</WebBrowserDebuggerHttpUrl>
+    <WebBrowserDebuggerHttpUrl>http://www.google.com.tw</WebBrowserDebuggerHttpUrl>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
     <LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
   </PropertyGroup>

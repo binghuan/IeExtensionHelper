@@ -28,6 +28,7 @@ CEentSink::CEentSink(int componentID)
 		break;
 	case IE_EXT_COMPONENT_TOOLBARBUTTON:
 		m_IsPopoverInitialized = false;
+		m_IeExtToolbarButtonInfo = manifestParser->getIeExtToolbarButtonInfo();
 		break;
 	case IE_EXT_COMPONENT_BHO:
 		m_IsBackgroundPageInitialized = false;
@@ -387,11 +388,6 @@ bool CEentSink::Event_BeforeNavigate2(
 	LPOLESTR Headers,
 	bool Cancel)
 {
-	// Do whatever you like here
-	// This is just an example
-	TCHAR msg[1024];
-	wsprintf(msg,_T("url=%ls\nFlags=0x%08X\nTargetFrameName=%ls\nPostData=%hs\nPostDataSize=%d\nHeaders=%ls\nCancel=%s"),url,Flags,TargetFrameName,(char*)PostData,PostDataSize,Headers,((Cancel)?(_T("true")):(_T("false"))));
-	//MessageBox(NULL,msg,_T("CodeProject BHO Example - BeforeNavigate2 event fired!"),MB_OK|MB_ICONINFORMATION);
 	return Cancel;
 }
 
