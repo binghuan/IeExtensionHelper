@@ -191,15 +191,15 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 					
 
 					wstring tabStr = L"{";
-					tabStr += L"title: ";
+					tabStr += L"\"title\": ";
 					tabStr += L"\"";
 					tabStr += bstrName;
 					tabStr += L"\",";
-					tabStr += L"url: ";
+					tabStr += L"\"url\": ";
 					tabStr += L"\"";
 					tabStr += bstrUrl;
 					tabStr += L"\",";
-					tabStr += L"id: ";
+					tabStr += L"\"id\": ";
 					tabStr += tabIDStr;
 					tabStr += L"}";
 
@@ -261,11 +261,11 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				script = L"onIeExtensionMsgBackgroundReceive(";
 
 				script += L"{";
-				script += L"name:\"";
+				script += L"\"name\":\"";
 				script += pDispParams->rgvarg[1].bstrVal;
-				script += L"\", tabId:";
+				script += L"\", \"tabId\":";
 				script += tabIDStr;
-				script += L", data:";
+				script += L", \"data\":";
 				script += L"\"";
 				script += pDispParams->rgvarg[0].bstrVal;
 				script += L"\"";
