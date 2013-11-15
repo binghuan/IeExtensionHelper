@@ -23,8 +23,10 @@ public:
 		CComBSTR bstrMember(eventName);
 		DISPID dispid;  
 		CComPtr<IDispatch>   m_pScript;  
-		m_pDocument->get_Script(&m_pScript);  
-
+		hr = m_pDocument->get_Script(&m_pScript);  
+		if(!SUCCEEDED(hr)) {
+			return hr;
+		}
 		if(m_pScript!=NULL)  
 		{  
 			hr = m_pScript->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
