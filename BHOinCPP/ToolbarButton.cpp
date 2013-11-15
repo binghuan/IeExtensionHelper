@@ -132,11 +132,6 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 			EventNotifier::issueEvent(m_IWebBrowser2Popover, IE_EXT_EVENT_POPOVER);
 		}
 		break;
-	case WM_PAINT:
-		{
-			//printf("WM_PAINT");
-		}
-		break;
 	case WM_KILLFOCUS:
 		//CloseWindow(hwnd);
 		break;
@@ -195,7 +190,13 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 				WinContainer.QueryControl(__uuidof(IWebBrowser2),(void**)&m_IWebBrowser2Popover);
 				
 			}
-			m_IWebBrowser2Popover->put_Silent(VARIANT_TRUE);
+
+			if(m_IeExtToolbarButtonInfo.debug == TRUE) {
+				m_IWebBrowser2Popover->put_Silent(VARIANT_FALSE);
+			} else {
+				m_IWebBrowser2Popover->put_Silent(VARIANT_TRUE);
+			}
+			
 			// BH_Lin@20131014
 			ConnectEventSink(m_IWebBrowser2Popover);
 
@@ -289,25 +290,29 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 			g_PopupHwnd, 
 			NULL,
 			g_PopupInstance, 
-			NULL );		
+			NULL );	
+
+		SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
+		ShowWindow (g_PopupHwnd, SW_SHOW);
+		SetForegroundWindow(g_PopupHwnd);
+		SetActiveWindow(g_PopupHwnd);
+
+		while (GetMessage (&messages, NULL, 0, 0))
+		{
+			TranslateMessage(&messages);
+
+			if((GetKeyState(VK_CONTROL) & 0x8000) && messages.wParam == 0x56) {
+				m_IWebBrowser2Popover->ExecWB(OLECMDID_PASTE, OLECMDEXECOPT_DONTPROMPTUSER, NULL, NULL); 
+			}
+
+			DispatchMessage(&messages);
+		}
 	}
 
 	SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
 	ShowWindow (g_PopupHwnd, SW_SHOW);
 	SetForegroundWindow(g_PopupHwnd);
 	SetActiveWindow(g_PopupHwnd);
-
-	while (GetMessage (&messages, NULL, 0, 0))
-	{
-		TranslateMessage(&messages);
-
-		if((GetKeyState(VK_CONTROL) & 0x8000) && messages.wParam == 0x56) {
-			m_IWebBrowser2Popover->ExecWB(OLECMDID_PASTE, OLECMDEXECOPT_DONTPROMPTUSER, NULL, NULL); 
-		}
-
-		DispatchMessage(&messages);
-	}
-
 	
 	
 	return result;	
