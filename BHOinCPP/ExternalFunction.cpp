@@ -49,6 +49,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 #define DISPID_EXECUTE_SCRIPT_IN_TAB 123008
 
 #define DISPID_GET_SELF_TAB 123009
+#define DISPID_SET_SELF_TAB_URL 123010
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
@@ -77,6 +78,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_GET_ACTIVE_TAB;
 	} else if(lstrcmp(rgszNames[0], L"getSelfTab")==0){
 		*rgDispId = DISPID_GET_SELF_TAB;
+	} else if(lstrcmp(rgszNames[0], L"setSelfTabUrl")==0){
+		*rgDispId = DISPID_SET_SELF_TAB_URL;
 	} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
 		*rgDispId = DISPID_OPEN_NEW_TAB;
 	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
@@ -144,6 +147,16 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				V_VT(pVarResult)=VT_BOOL;
 				V_BOOL(pVarResult) = extStatus->isPopoverVisible();
 			}
+		}
+		break;
+	case DISPID_SET_SELF_TAB_URL:
+		{
+			VARIANT varMyURL;
+			VariantInit(&varMyURL);
+			varMyURL.vt = VT_BSTR;
+			varMyURL.bstrVal = SysAllocString(pDispParams->rgvarg[0].bstrVal);
+
+			m_IWebBrowser2ContentScript-> Navigate2(&varMyURL,NULL,NULL,NULL,NULL);
 		}
 		break;
 	case DISPID_OPEN_NEW_TAB:
@@ -265,15 +278,21 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				script += pDispParams->rgvarg[1].bstrVal;
 				script += L"\", \"tabId\":";
 				script += tabIDStr;
-				script += L", \"data\":";
-				script += L"\"";
+				script += L", \"message\":";
+				script += L"";
 				script += pDispParams->rgvarg[0].bstrVal;
-				script += L"\"";
+				script += L"";
 				script += L"}";
 				script += L");";
 
 				CComBSTR bstrScript(script.c_str());
 				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+				if(hr == S_OK) {
+					printf("Success: msg2Background ");
+				} else {
+					printf("Fail: msg2Background ");
+				}
+
 			}  
 
 			/*
