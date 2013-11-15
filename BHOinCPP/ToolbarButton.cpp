@@ -146,7 +146,8 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 			if(wParam == TRUE) {
 				_tprintf(_T("PopupWindow is visible"));
 				if(m_IsPopoverInitialized == TRUE) {
-					SendMessageTimeout(g_PopupHwnd, WM_SP_POPOVER, 0, 0, SMTO_ABORTIFHUNG, 500, NULL);	
+					//SendMessageTimeout(g_PopupHwnd, WM_SP_POPOVER, 0, 0, SMTO_ABORTIFHUNG, 500, NULL);	
+					EventNotifier::issueEvent(m_IWebBrowser2Popover, IE_EXT_EVENT_POPOVER);
 				} 
 				m_IsPopoverInitialized = true;
 
@@ -192,8 +193,9 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 			WinContainer.CreateControl(pszName);
 			if(m_IWebBrowser2Popover == NULL) {
 				WinContainer.QueryControl(__uuidof(IWebBrowser2),(void**)&m_IWebBrowser2Popover);
-				m_IWebBrowser2Popover->put_Silent(VARIANT_TRUE);
+				
 			}
+			m_IWebBrowser2Popover->put_Silent(VARIANT_TRUE);
 			// BH_Lin@20131014
 			ConnectEventSink(m_IWebBrowser2Popover);
 
