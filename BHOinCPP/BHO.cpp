@@ -112,13 +112,8 @@ STDMETHODIMP CBHO::GetSite(REFIID riid,void **ppvSite)
 // This is called by us to get a connection to IE and start handling IE events
 void CBHO::ConnectEventSink(IWebBrowser2 *pSite)
 {
-	EventSink4ContentScript->m_IWebBrowser2 = pSite;
-	m_IWebBrowser2ContentScript = pSite;
-
-
 	HRESULT hr;
 	IConnectionPointContainer* pCPC;
-
 	if(pSite==NULL) return; // If we don't have a site, don't do anything
 	// Get an IConnectionPointContainer interface pointer from the site
 	hr=pSite->QueryInterface(IID_IConnectionPointContainer,(void**)&pCPC);
@@ -130,6 +125,11 @@ void CBHO::ConnectEventSink(IWebBrowser2 *pSite)
 		pCPC->Release();
 		return;
 	}
+
+	pSite->put_Silent(VARIANT_TRUE);
+	EventSink4ContentScript->m_IWebBrowser2 = pSite;
+	m_IWebBrowser2ContentScript = pSite;
+
 	// Finally we can plug our event handler object EventSink into the connection point and start receiving IE events
 	// The advise cookie is just a return value we use when we want to "unplug" our event handler object from the connection point
 	pCP->Advise((IUnknown*)EventSink4ContentScript,&adviseCookie);
