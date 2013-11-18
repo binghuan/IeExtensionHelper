@@ -201,25 +201,14 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 					TCHAR *tabIDStr = new TCHAR[MAX_PATH];
 					ZeroMemory(tabIDStr, MAX_PATH);
 					swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
-					
 
-					wstring tabStr = L"{";
-					tabStr += L"\"title\": ";
-					tabStr += L"\"";
-					tabStr += bstrName;
-					tabStr += L"\",";
-					tabStr += L"\"url\": ";
-					tabStr += L"\"";
-					tabStr += bstrUrl;
-					tabStr += L"\",";
-					tabStr += L"\"id\": ";
-					tabStr += tabIDStr;
-					tabStr += L"}";
+					TCHAR *scriptBuff = new TCHAR[BUFFERSIZE];
+					swprintf_s(scriptBuff, BUFFERSIZE, L"{\"title\":\"%s\",\"url\":\"%s\", \"id\":%s}", bstrName, bstrUrl, tabIDStr);
 
 					VariantInit(pVarResult);
 					V_VT(pVarResult)=VT_BSTR;
 
-					CComBSTR returnObj = tabStr.c_str();
+					CComBSTR returnObj = scriptBuff;
 					V_BSTR(pVarResult) = returnObj;
 				}
 			}
@@ -270,29 +259,11 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				ZeroMemory(tabIDStr, MAX_PATH);
 				swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
 
-				wstring script ;
-				script = L"onIeExtensionMsgBackgroundReceive(";
+				TCHAR *scriptBuff = new TCHAR[BUFFERSIZE];
+				swprintf_s(scriptBuff, BUFFERSIZE, L"onIeExtensionMsgBackgroundReceive({\"name\":\"%s\",\"tabId\":%s,\"message\":%s});", pDispParams->rgvarg[1].bstrVal, tabIDStr, pDispParams->rgvarg[0].bstrVal);
 
-				script += L"{";
-				script += L"\"name\":\"";
-				script += pDispParams->rgvarg[1].bstrVal;
-				script += L"\", \"tabId\":";
-				script += tabIDStr;
-				script += L", \"message\":";
-				script += L"";
-				script += pDispParams->rgvarg[0].bstrVal;
-				script += L"";
-				script += L"}";
-				script += L");";
-
-				CComBSTR bstrScript(script.c_str());
+				CComBSTR bstrScript(scriptBuff);
 				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
-				if(hr == S_OK) {
-					printf("Success: msg2Background ");
-				} else {
-					printf("Fail: msg2Background ");
-				}
-
 			}  
 
 			/*
@@ -348,20 +319,10 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				CComBSTR bstrLanguage = _T("javascript");
 				VARIANT vEmpty = {0};
 
-				wstring script ;
-				script = L"onIeExtensionMsgContentScriptReceive(";
+				TCHAR *scriptBuff = new TCHAR[BUFFERSIZE];
+				swprintf_s(scriptBuff, BUFFERSIZE, L"onIeExtensionMsgContentScriptReceive({\"name\":\"%s\",\"message\":'%s'});", pDispParams->rgvarg[1].bstrVal, pDispParams->rgvarg[0].bstrVal);
 				
-				script += L"{";
-				script += L"name:'";
-				script += pDispParams->rgvarg[1].bstrVal;
-				script += L"', message:";
-				script += L"'";
-				script += pDispParams->rgvarg[0].bstrVal;
-				script += L"'";
-				script += L"}";
-				script += L");";
-				
-				CComBSTR bstrScript(script.c_str());
+				CComBSTR bstrScript(scriptBuff);
 				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 			}  
 		}
