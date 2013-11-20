@@ -388,6 +388,13 @@ bool CEentSink::Event_BeforeNavigate2(
 	LPOLESTR Headers,
 	bool Cancel)
 {
+	UNREFERENCED_PARAMETER(url);
+	UNREFERENCED_PARAMETER(Flags);
+	UNREFERENCED_PARAMETER(TargetFrameName);
+	UNREFERENCED_PARAMETER(PostData);
+	UNREFERENCED_PARAMETER(PostDataSize);
+	UNREFERENCED_PARAMETER(Headers);
+
 	return Cancel;
 }
 
