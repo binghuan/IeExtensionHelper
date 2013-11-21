@@ -259,8 +259,11 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				ZeroMemory(tabIDStr, MAX_PATH);
 				swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  m_TabID);
 
+				CComBSTR bstrUrl;
+				m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
+
 				TCHAR *scriptBuff = new TCHAR[BUFFERSIZE];
-				swprintf_s(scriptBuff, BUFFERSIZE, L"onIeExtensionMsgBackgroundReceive({\"name\":\"%s\",\"tabId\":%s,\"message\":%s});", pDispParams->rgvarg[1].bstrVal, tabIDStr, pDispParams->rgvarg[0].bstrVal);
+				swprintf_s(scriptBuff, BUFFERSIZE, L"onIeExtensionMsgBackgroundReceive({\"name\":\"%s\",\"tabId\":%s,\"message\":%s, \"senderUrl\":\"%s\"});", pDispParams->rgvarg[1].bstrVal, tabIDStr, pDispParams->rgvarg[0].bstrVal, bstrUrl);
 
 				CComBSTR bstrScript(scriptBuff);
 				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);

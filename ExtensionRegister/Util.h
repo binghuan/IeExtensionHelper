@@ -71,13 +71,13 @@ public:
 		return pObj->Invoke(dispid, IID_NULL, LOCALE_SYSTEM_DEFAULT, DISPATCH_PROPERTYPUT, &ps, NULL, NULL, NULL);
 	}
 
-	static void rand_str(char *dest, size_t length) {
+	static void rand_str(char *dest, int length) {
 		char charset[] = 
 			"abcdefghijklmnopqrstuvwxyz"
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		while (length-- > 0) {
-			size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
+			int index = (int) rand() / RAND_MAX * (sizeof charset - 1);
 			*dest++ = charset[index];
 		}
 		*dest = '\0';
