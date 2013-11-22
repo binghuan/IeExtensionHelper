@@ -12,6 +12,7 @@ ExternalFunction::ExternalFunction(void)
 {
 	IeManifestParser *manifestParser = new IeManifestParser(hInstance);
 	m_IeExtContentScriptInfo = manifestParser->getIeExtContentScriptInfo();
+	m_IeExtToolbarButtonInfo = manifestParser->getIeExtToolbarButtonInfo();
 }
 
 
@@ -50,6 +51,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 
 #define DISPID_GET_SELF_TAB 123009
 #define DISPID_SET_SELF_TAB_URL 123010
+#define DISPID_SET_POPOVER_INVISIBLE 123011
+#define DISPID_SET_POPOVER_VISIBLE 123012
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
@@ -84,6 +87,10 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_OPEN_NEW_TAB;
 	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
 		*rgDispId = DISPID_IS_POPOVER_VISIBLE;
+	} else if(lstrcmp(rgszNames[0], L"setPopoverInvisible")==0){
+		*rgDispId = DISPID_SET_POPOVER_INVISIBLE;
+	} else if(lstrcmp(rgszNames[0], L"setPopoverVisible")==0){
+		*rgDispId = DISPID_SET_POPOVER_VISIBLE;
 	} else if(lstrcmp(rgszNames[0], L"executeScriptInTab")==0){
 		*rgDispId = DISPID_EXECUTE_SCRIPT_IN_TAB;
 	} else {
@@ -120,6 +127,36 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
+	case DISPID_SET_POPOVER_VISIBLE:
+		{
+			if(g_PopupHwnd != NULL) {
+				// try to get Cursor  position.
+				POINT p;
+				if (GetCursorPos(&p))
+				{
+					//cursor position now in p.x and p.y
+					_tprintf(_T("getCursor X:%d,Y:%d"), p.x, p.y);
+				}
+				int POS_X_OF_POPUP = p.x;
+				int POS_Y_OF_POPUP = p.y;
+				int popupWidth = m_IeExtToolbarButtonInfo.popupWidth;
+				int popupHeight = m_IeExtToolbarButtonInfo.popupHeight;
+				SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
+				ShowWindow (g_PopupHwnd, SW_SHOW);
+				SetForegroundWindow(g_PopupHwnd);
+				SetActiveWindow(g_PopupHwnd);
+			}
+			
+		}
+		break;
+	case DISPID_SET_POPOVER_INVISIBLE:
+		{
+			if(g_PopupHwnd != NULL) {
+				ShowWindow(g_PopupHwnd, SW_HIDE);
+			}
+		}
+		break;
+
 	case DISPID_EXECUTE_SCRIPT_IN_TAB:
 		{
 			CComPtr<IDispatch>   pHtmlDocDispatch;  

@@ -28,7 +28,7 @@ extern HINSTANCE hInstance;
 extern CComPtr<IWebBrowser2> m_IWebBrowser2BHO;
 extern CComPtr<IWebBrowser2> m_IWebBrowser2ContentScript;
 extern CComPtr<IWebBrowser2> m_IWebBrowser2Popover;
-
+extern HWND g_PopupHwnd;
 
 #define IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED true
 

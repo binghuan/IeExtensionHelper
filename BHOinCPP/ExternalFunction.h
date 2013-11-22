@@ -24,5 +24,6 @@ public:
 
 
 	IeExtContentScriptInfo m_IeExtContentScriptInfo;
+	IeExtToolbarButtonInfo m_IeExtToolbarButtonInfo;
 };
 
