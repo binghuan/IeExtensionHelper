@@ -53,6 +53,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 #define DISPID_SET_SELF_TAB_URL 123010
 #define DISPID_SET_POPOVER_INVISIBLE 123011
 #define DISPID_SET_POPOVER_VISIBLE 123012
+#define DISPID_OUTPUTDEBUGSTRING 123013
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
@@ -93,6 +94,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_SET_POPOVER_VISIBLE;
 	} else if(lstrcmp(rgszNames[0], L"executeScriptInTab")==0){
 		*rgDispId = DISPID_EXECUTE_SCRIPT_IN_TAB;
+	} else if(lstrcmp(rgszNames[0], L"outputDebugString")==0){
+		*rgDispId = DISPID_OUTPUTDEBUGSTRING;
 	} else {
 		*rgDispId = DISP_E_UNKNOWNNAME;
 		hr = ResultFromScode(DISP_E_UNKNOWNNAME);
@@ -127,6 +130,11 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
+	case DISPID_OUTPUTDEBUGSTRING:
+		{
+			OutputDebugString(pDispParams->rgvarg[0].bstrVal);
+		}
+		break;
 	case DISPID_SET_POPOVER_VISIBLE:
 		{
 			if(g_PopupHwnd != NULL) {
