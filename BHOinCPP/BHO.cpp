@@ -80,7 +80,8 @@ STDMETHODIMP CBHO::SetSite(IUnknown *pUnkSite)
 		VariantInit(&varMyURL);
 		varMyURL.vt = VT_BSTR;
 		varMyURL.bstrVal = SysAllocString(m_IeExtBHOInfo.page);
-		m_IWebBrowser2BHO-> Navigate2(&varMyURL,0,0,0,0);
+		hr = m_IWebBrowser2BHO-> Navigate2(&varMyURL,0,0,0,0);
+
 		ConnectEventSink2BHO(m_IWebBrowser2BHO);
 	}
 	// BH_Lin@201310121	-------------------------------------------------<

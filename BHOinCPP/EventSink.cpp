@@ -250,6 +250,18 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 	for(n=0;n<5;n++) VariantInit(&v[n]);
 
 	switch(dispIdMember) {
+	case DISPID_NAVIGATEERROR:
+		{
+			_tprintf(TEXT("DISPID_NAVIGATEERROR"));
+			switch(m_componentID) {
+			case IE_EXT_COMPONENT_BHO:
+				_tprintf(TEXT("BHO"));
+				Release();
+				break;
+			}
+			
+		}
+		break;
 	case DISPID_BEFORENAVIGATE2:
 		{
 			_tprintf(TEXT("DISPID_BEFORENAVIGATE2"));

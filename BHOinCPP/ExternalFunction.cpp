@@ -285,7 +285,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
 			CComBSTR bstrMember = _T("onIeExtensionMsgBackgroundReceive");
 
-			if (SUCCEEDED(hr))  
+			if (hr == S_OK)  
 			{  
 				CComQIPtr<IHTMLWindow2> pWindow;	
 				m_pDocument->get_parentWindow(&pWindow);
