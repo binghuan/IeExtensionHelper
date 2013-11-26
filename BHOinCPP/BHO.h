@@ -1,11 +1,3 @@
-/*
- Copyright (C) 2009 Moutaz Haq <cefarix@gmail.com>
- This file is released under the Code Project Open License <http://www.codeproject.com/info/cpol10.aspx>
-
- This defines our implementation of the IObjectWithSite interface. 
- The IObjectWithSite interface is how Internet Explorer accesses our BHO.
-*/
-
 #ifndef __BHO_H__
 #define __BHO_H__
 
