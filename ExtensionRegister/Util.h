@@ -159,7 +159,7 @@ public:
 	static char* readInputFile(wstring filePath) {
 		HANDLE hFile; 
 		DWORD  dwBytesRead = 0;
-		CHAR *ReadBuffer = new CHAR[BUFFERSIZE];
+		CHAR ReadBuffer[BUFFERSIZE] = {0};
 
 		hFile = CreateFile(filePath.c_str(),               // file to open
 			GENERIC_READ,          // open for reading
