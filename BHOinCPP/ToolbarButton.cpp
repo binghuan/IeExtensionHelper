@@ -113,7 +113,7 @@ void DisconnectEventSink(IWebBrowser2 *pSite)
 
 #define WM_SP_POPOVER	0x10001
 
-void reloadPopoverPage() {
+void loadPopoverPage() {
 	VARIANT varMyURL;
 	VariantInit(&varMyURL);
 	varMyURL.vt = VT_BSTR;
@@ -156,7 +156,6 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		{
 			_tprintf(_T("PopupWindow is active"));
 			extStatus->setPopoverVisible(true);
-			reloadPopoverPage();
 		}
 		else 
 		{
@@ -165,9 +164,8 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 				_tprintf(_T("do not close PopupWindow in debug mode"));
 			} else {
 				ShowWindow(hwnd, SW_HIDE);
-			}
-			
-			extStatus->setPopoverVisible(false);
+				extStatus->setPopoverVisible(false);
+			}	
 		}
 		break ;
 	case WM_CREATE:
@@ -196,7 +194,7 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 			// BH_Lin@20131014
 			ConnectEventSink(m_IWebBrowser2Popover);
 
-			reloadPopoverPage();
+			loadPopoverPage();
 
 		}
 		break;	

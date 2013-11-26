@@ -43,6 +43,11 @@ public:
 				// initialize to invalid arg  
 				UINT nArgErr = (UINT)-1;  
 				hr = m_pScript->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
+				if(hr == S_OK) {
+					printf("S_OK");
+				} else {
+					printf("!S_OK");
+				}
 			}  
 		}
 

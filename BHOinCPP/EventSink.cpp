@@ -176,6 +176,24 @@ void CEentSink::exportExternalFunction(int componentID) {
 	//CComBSTR bstrScript = _T("alert(\"tuma\");");
 	//hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 
+
+	if((componentID == IE_EXT_COMPONENT_TOOLBARBUTTON) &&
+		(m_IeExtToolbarButtonInfo.isDefined == TRUE) &&
+		(m_IeExtToolbarButtonInfo.debug == TRUE)) {
+			CComQIPtr<IHTMLWindow2> pWindow;	
+			m_pDocument->get_parentWindow(&pWindow);
+			CComBSTR bstrLanguage = _T("javascript");
+			VARIANT vEmpty = {0};
+
+			string contentString ;
+			contentString += "var head = document.getElementsByTagName('head')[0];";
+			contentString += "var scriptOfFirebugLite = document.createElement('script');";
+			contentString += "scriptOfFirebugLite.src = \"https://getfirebug.com/firebug-lite.js#enableTrace,overrideConsole,startOpened,saveCookies,ignoreFirebugElements\";";
+			contentString += "head.appendChild(scriptOfFirebugLite );";
+			CComBSTR bstrScript(contentString.c_str());
+			hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+	}
+
 	// BH_Lin@20131030	--------------------------------------------->
 	// purpose: inject content script.
 					
