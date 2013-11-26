@@ -286,6 +286,7 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 			g_PopupInstance, 
 			NULL );	
 
+		SetWindowLong(g_PopupHwnd, GWL_STYLE, WS_BORDER|WS_THICKFRAME);
 		SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
 		ShowWindow (g_PopupHwnd, SW_SHOW);
 		SetForegroundWindow(g_PopupHwnd);
