@@ -156,11 +156,7 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		{
 			_tprintf(_T("PopupWindow is active"));
 			extStatus->setPopoverVisible(true);
-			if(m_IeExtToolbarButtonInfo.debug == TRUE) {
-				_tprintf(_T("do not reload Popover page in debug mode"));
-			} else {
-				reloadPopoverPage();
-			}
+			reloadPopoverPage();
 		}
 		else 
 		{
