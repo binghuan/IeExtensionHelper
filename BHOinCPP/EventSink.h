@@ -45,10 +45,12 @@ protected:
 	// Event handling methods
 	bool Event_BeforeNavigate2(LPOLESTR url,LONG Flags,LPOLESTR TargetFrameName,PUCHAR PostData,LONG PostDataSize,LPOLESTR Headers,bool Cancel);
 
+	void backupStorage(int storageType);
+
 	IeExtContentScriptInfo m_IeExtContentScriptInfo;
 	IeExtToolbarButtonInfo m_IeExtToolbarButtonInfo;
+	IeExtBHOInfo m_IeExtBHOInfo;
 	boolean m_IsPopoverInitialized;
-	boolean m_IsBackgroundPageInitialized;
 };
 
 

@@ -26,6 +26,7 @@ CBHO::CBHO(IeExtBHOInfo ieExtBhoInfo, IeExtContentScriptInfo ieExtContentScriptI
 	m_IeExtBHOInfo = ieExtBhoInfo;
 
 	extStatusBHO = new ExtStatus(m_IeExtBHOInfo.extenionID);
+	extStatusBHO->tabCounterPlus();
 
 	/*
 	boolean isTrue = extStatusBHO->isPopoverVisible();
@@ -40,6 +41,7 @@ CBHO::CBHO(IeExtBHOInfo ieExtBhoInfo, IeExtContentScriptInfo ieExtContentScriptI
 CBHO::~CBHO()
 {
 	DisconnectEventSink();
+	extStatusBHO->tabCounterMinus();
 }
 
 CComPtr<IWebBrowser2> m_IWebBrowser2BHO;	

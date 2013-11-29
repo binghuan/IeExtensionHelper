@@ -8,7 +8,7 @@
 using namespace Json;
 using namespace std;
 
-#define SHARE_VARIABLE_SIZE 8192
+#define SHARE_VARIABLE_SIZE 9999999
 
 class ExtStatus
 {
@@ -25,7 +25,14 @@ public:
 
 	void retrieveExtStatus();
 	void commitChange();
+	void setLocalStorageData(wstring localStorageStr);
+	wstring getLocalStorageData();
+	void setSessionStorageData(wstring localStorageStr);
+	wstring getSessionStorageData();
 
+	void tabCounterMinus();
+	void tabCounterPlus();
+	int getTabCounter();
 private:
 	TCHAR* m_ExtensionID;
 

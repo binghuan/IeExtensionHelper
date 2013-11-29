@@ -11,6 +11,8 @@ using namespace std;
 #include "EventNotifier.h"
 
 // BH_Lin: testing GetExternal
+static boolean m_IsBackgroundPageInitialized;
+
 
 
 CEentSink::CEentSink(int componentID)
@@ -32,6 +34,7 @@ CEentSink::CEentSink(int componentID)
 		break;
 	case IE_EXT_COMPONENT_BHO:
 		m_IsBackgroundPageInitialized = false;
+		m_ExtStatus = new ExtStatus(m_IeExtBHOInfo.extenionID);
 		break;
 	}
 
@@ -92,7 +95,6 @@ STDMETHODIMP CEentSink::GetIDsOfNames(REFIID riid,LPOLESTR *rgszNames,UINT cName
 }
 
 void CEentSink::exportExternalFunction(int componentID) {
-	_tprintf(TEXT("IE_EXT_COMPONENT_TOOLBARBUTTON"));		
 
 	HRESULT hr;
 	CComPtr<IHTMLDocument2>   m_pDocument; 
@@ -176,6 +178,53 @@ void CEentSink::exportExternalFunction(int componentID) {
 	//CComBSTR bstrScript = _T("alert(\"tuma\");");
 	//hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 
+	if((componentID == IE_EXT_COMPONENT_BHO)) {
+		// inject function to backup localStroage.
+		CComPtr<IDispatch>   pHtmlDocDispatch;  
+		CComPtr<IDispatch>   m_pScript;  
+
+		if(SUCCEEDED(hr)) {
+			CComQIPtr<IHTMLWindow2> pWindow;	
+			m_pDocument->get_parentWindow(&pWindow);
+			CComBSTR bstrLanguage = _T("javascript");
+			VARIANT vRetVal;
+			VariantInit(&vRetVal);
+			V_VT(&vRetVal) = VT_BSTR | VT_BYREF;
+
+			wstring javaScript = L"";
+
+			javaScript += L"function onIeExtensionEventBackupLocalStorage() {";
+			javaScript += L"if(localStorage) {";
+			javaScript += L"var cloneLocalStroageStr = \"{\";";
+			javaScript += L"for(var i=0; i< Object.keys(localStorage).length; i++) {";
+			javaScript += L"if(i > 0) {cloneLocalStroageStr += \",\";}";
+			javaScript += L"cloneLocalStroageStr += \"\\\"\" + Object.keys(localStorage)[i]  + \"\\\":\"  + JSON.stringify(localStorage.getItem(Object.keys(localStorage)[i])) ;";
+			javaScript += L"}";
+			javaScript += L"cloneLocalStroageStr += \"}\";";
+			javaScript += L"console.warn(\"--> backup localStorage: \" + localStorage.testing + \" - \" + (new Date()).getTime());";
+			javaScript += L"return cloneLocalStroageStr;";
+			javaScript += L"}";
+			javaScript += L"};";
+			javaScript += L"function onIeExtensionEventBackupSessionStorage() {";
+			javaScript += L"if(sessionStorage) {";
+			javaScript += L"var cloneSessionStroageStr = \"{\";";
+			javaScript += L"for(var i=0; i< Object.keys(sessionStorage).length; i++) {";
+			javaScript += L"if(i > 0) {cloneSessionStroageStr += \",\";}";
+			javaScript += L"cloneSessionStroageStr += \"\\\"\" + Object.keys(sessionStorage)[i]  + \"\\\":\"  + JSON.stringify(sessionStorage.getItem(Object.keys(sessionStorage)[i])) ;";
+			javaScript += L"}";
+			javaScript += L"cloneSessionStroageStr += \"}\";";
+			javaScript += L"console.warn(\"--> backup sessionStorage: \" + sessionStorage.testing + \" - \" +(new Date()).getTime());";
+			javaScript += L"return cloneSessionStroageStr;";
+			javaScript += L"}";
+			javaScript += L"};";
+		
+			CComBSTR bstrScript(javaScript.c_str());
+			
+			hr = pWindow->execScript(bstrScript,bstrLanguage,&vRetVal);
+			
+		}
+	}
+
 
 	if((componentID == IE_EXT_COMPONENT_TOOLBARBUTTON) &&
 		(m_IeExtToolbarButtonInfo.isDefined == TRUE) &&
@@ -239,6 +288,57 @@ void CEentSink::exportExternalFunction(int componentID) {
 	_tprintf(TEXT("Done: IE_EXT_COMPONENT_CONTENTSCRIPT"));
 }
 
+void CEentSink::backupStorage(int storageType) {
+	// get localStorage data.
+	CComBSTR bstrMember;
+	switch (storageType)
+	{
+	case 1:
+		bstrMember = _T("onIeExtensionEventBackupLocalStorage");
+		break;
+	case 2:
+		bstrMember = _T("onIeExtensionEventBackupSessionStorage");
+		break;
+	}
+	
+	DISPID dispid;  
+	CComPtr<IDispatch>   m_pScript;  
+	CComPtr<IHTMLDocument2>   m_pDocument; 
+	HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+	m_pDocument->get_Script(&m_pScript);  
+
+	if(m_pScript!=NULL)  
+	{  
+		hr = m_pScript->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
+		if (SUCCEEDED(hr))  
+		{  
+			DISPPARAMS dispparams;  
+			memset(&dispparams, 0, sizeof(DISPPARAMS));  
+			dispparams.cArgs = 0;  
+			dispparams.cNamedArgs = 0;  
+
+			EXCEPINFO excepInfo;  
+			memset(&excepInfo, 0, sizeof(EXCEPINFO));  
+			CComVariant vaResult;  
+			// initialize to invalid arg  
+			UINT nArgErr = (UINT)-1;  
+			hr = m_pScript->Invoke(dispid,IID_NULL,0,DISPATCH_METHOD,&dispparams,&vaResult,&excepInfo,&nArgErr);  
+			wstring storageData = vaResult.bstrVal;
+			switch(storageType) {
+			case 1:
+				m_ExtStatus->setLocalStorageData(storageData);
+				OutputDebugString(L"IE Tab backup localStorage complete");
+				break;
+			case 2:
+				m_ExtStatus->setSessionStorageData(storageData);
+				OutputDebugString(L"IE Tab backup sessionStorage complete");
+				break;
+			}
+			
+		}  
+	}
+}
+
 // This is called by IE to notify us of events
 // Full documentation about all the events supported by DWebBrowserEvents2 can be found at
 //  http://msdn.microsoft.com/en-us/library/aa768283(VS.85).aspx
@@ -270,7 +370,6 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 	switch(dispIdMember) {
 	case DISPID_NAVIGATEERROR:
 		{
-			_tprintf(TEXT("DISPID_NAVIGATEERROR"));
 			switch(m_componentID) {
 			case IE_EXT_COMPONENT_BHO:
 				_tprintf(TEXT("BHO"));
@@ -307,7 +406,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 				{
 					_tprintf(TEXT("IE_EXT_COMPONENT_BHO"));
 					if(m_IsBackgroundPageInitialized == false) {
-						m_IsBackgroundPageInitialized = true;
+						//m_IsBackgroundPageInitialized = true;
 						EventNotifier::issueEvent(m_IWebBrowser2BHO, IE_EXT_EVENT_TAB_OPEN);
 					}
 				}
@@ -357,7 +456,52 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 
 						// ... your code here ...
 						if(visible) {
-							_tprintf(TEXT("Tab is visible: %d"), m_componentID);
+							OutputDebugString(L"IE Tab is Visible");
+							
+							if((m_IWebBrowser2BHO != NULL) 
+								&& (m_ExtStatus->getTabCounter() > 1) 
+								&& m_IsBackgroundPageInitialized == true) {
+							//if(false) {
+								// restore localStroage.
+								CComPtr<IDispatch>   pHtmlDocDispatch;  
+								CComPtr<IHTMLDocument2>   m_pDocument;  
+								CComPtr<IDispatch>   m_pScript;  
+								HRESULT hr = m_IWebBrowser2BHO->get_Document((IDispatch**)&m_pDocument);
+
+								if(SUCCEEDED(hr)) {
+									CComQIPtr<IHTMLWindow2> pWindow;	
+									m_pDocument->get_parentWindow(&pWindow);
+									CComBSTR bstrLanguage = _T("javascript");
+									VARIANT vEmpty = {0};
+									wstring restoreScript = L"(function(){";
+									restoreScript += L"console.warn(\"-> ready to restore localStorage:\" + \" - \" +(new Date()).getTime());";
+									restoreScript += L"var restoreData = ";
+									OutputDebugString(L"IE Tab is ready to restore localStorage");
+									restoreScript += m_ExtStatus->getLocalStorageData();
+									OutputDebugString(L"IE Tab is restore localStorage complete");
+									restoreScript += L";";
+									restoreScript += L"localStorage.clear();";
+									restoreScript += L"for(var i=0; i< Object.keys(restoreData).length; i++) {";
+									restoreScript += L"localStorage[Object.keys(restoreData)[i]] = restoreData[Object.keys(restoreData)[i]];";
+									restoreScript += L"}";
+									restoreScript += L"console.warn(\"-> restore localStorage complete:\" + localStorage.testing + \" - \" +(new Date()).getTime());";
+									restoreScript += L"}());";
+									CComBSTR bstrScript(restoreScript.c_str());
+									hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+
+									wstring restoreScript2 = L"(function(){";
+									restoreScript2 += L"var restoreData = ";
+									restoreScript2 += m_ExtStatus->getSessionStorageData();
+									restoreScript2 += L";";
+									restoreScript2 += L"sessionStorage.clear();";
+									restoreScript2 += L"for(var i=0; i< Object.keys(restoreData).length; i++) {";
+									restoreScript2 += L"sessionStorage[Object.keys(restoreData)[i]] = restoreData[Object.keys(restoreData)[i]];";
+									restoreScript2 += L"}";
+									restoreScript2 += L"console.warn(\"-> restore sessionStorage complete:\" + sessionStorage.testing + \" - \" + (new Date()).getTime());";
+									restoreScript2 += L"}());";
+									CComBSTR bstrScript2(restoreScript2.c_str());
+									hr = pWindow->execScript(bstrScript2,bstrLanguage,&vEmpty);
+								}
 
 							CComBSTR bstrName;
 							CComBSTR bstrUrl;
@@ -366,12 +510,17 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 
 							// need to implement dynamic tabID. 
 							m_ExtStatus->setActiveTabInfo( 99999999 , bstrName.m_str, bstrUrl.m_str);
-
-							if(m_IWebBrowser2BHO != NULL) {
+								// notify tab is active
 								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
+								
 							}
+							m_IsBackgroundPageInitialized = true;
+
 						} else {
-							_tprintf(TEXT("Tab is not visible: %d"), m_componentID);
+							OutputDebugString(L"IE Tab is not Visible");
+							backupStorage(1);
+							backupStorage(2);
+
 							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
 						}
 					}

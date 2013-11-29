@@ -13,6 +13,7 @@ ExternalFunction::ExternalFunction(void)
 	IeManifestParser *manifestParser = new IeManifestParser(hInstance);
 	m_IeExtContentScriptInfo = manifestParser->getIeExtContentScriptInfo();
 	m_IeExtToolbarButtonInfo = manifestParser->getIeExtToolbarButtonInfo();
+	m_IeExtBHOInfo = manifestParser->getIeExtBHOInfo();
 }
 
 

@@ -63,6 +63,9 @@ void ExtStatus::retrieveExtStatus()
 
 		m_manifestRoot["isPopoverVisible"] = m_manifestRoot.get("isPopoverVisible", NULL);
 		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", NULL);
+		m_manifestRoot["localStorage"] = m_manifestRoot.get("localStorage", NULL);
+		m_manifestRoot["sessionStorage"] = m_manifestRoot.get("sessionStorage", NULL);
+		m_manifestRoot["tabCounter"] = m_manifestRoot.get("tabCounter", NULL);
 	}
 }
 
@@ -87,11 +90,116 @@ boolean ExtStatus::isPopoverVisible() {
 	return result;
 };
 
+void ExtStatus::setSessionStorageData(wstring storageStr) {
+	retrieveExtStatus();
+
+	int nIndex = WideCharToMultiByte(CP_ACP, 0, storageStr.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsi = new char[nIndex + 1];
+	WideCharToMultiByte(CP_ACP, 0, storageStr.c_str(), -1, pAnsi, nIndex, NULL, NULL);
+
+	m_manifestRoot["sessionStorage"] = pAnsi;
+	commitChange();
+}
+
+wstring ExtStatus::getSessionStorageData()
+{
+	retrieveExtStatus();
+
+	_TCHAR* result = new _TCHAR[SHARE_VARIABLE_SIZE];
+	ZeroMemory(result, SHARE_VARIABLE_SIZE);
+
+	Value storageData = m_manifestRoot.get("sessionStorage", NULL);
+	if(storageData != NULL) {
+		char* tempStr = const_cast<char*>(storageData.asCString());	
+		Util::AnsiToUnicode16(tempStr, result, SHARE_VARIABLE_SIZE);
+	}
+
+
+	printf("getSessionStorageData --> %s", result);
+
+	wstring data = result;
+
+	if(result != NULL) {
+		delete result;
+	}
+
+	return data;
+}
+
+void ExtStatus::setLocalStorageData(wstring localStorageStr) {
+	retrieveExtStatus();
+
+	int nIndex = WideCharToMultiByte(CP_ACP, 0, localStorageStr.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsi = new char[nIndex + 1];
+	ZeroMemory(pAnsi, nIndex + 1);
+	WideCharToMultiByte(CP_ACP, 0, localStorageStr.c_str(), -1, pAnsi, nIndex, NULL, NULL);
+
+	m_manifestRoot["localStorage"] = pAnsi;
+	commitChange();
+}
+
+wstring ExtStatus::getLocalStorageData()
+{
+	retrieveExtStatus();
+
+	_TCHAR* result = new _TCHAR[SHARE_VARIABLE_SIZE];
+	ZeroMemory(result, SHARE_VARIABLE_SIZE);
+
+	Value localStorageData = m_manifestRoot.get("localStorage", NULL);
+	if(localStorageData != NULL) {
+		char* tempStr = const_cast<char*>(localStorageData.asCString());	
+		Util::AnsiToUnicode16(tempStr, result, SHARE_VARIABLE_SIZE);
+	}
+
+	printf("getLocalStorageData --> %s", result);
+	wstring data = result;
+	if(result != NULL) {
+		delete result;
+	}
+	
+	return data;
+}
+
 void ExtStatus::setPopoverVisible( boolean willVisible)
 {
 	retrieveExtStatus();
 
 	m_manifestRoot["isPopoverVisible"] = willVisible;
+
+	commitChange();
+}
+
+int ExtStatus::getTabCounter() {
+	int result = false;
+	retrieveExtStatus();
+
+	Value tabCounter = m_manifestRoot.get("tabCounter", NULL);
+	if(tabCounter != NULL) {
+		result = tabCounter.asInt();
+	}
+
+	printf("isPopoverVisible --> %d", result);
+	if(result < 0) 
+	{ 
+		result = 0;
+	};
+	return result;
+};
+
+void ExtStatus::tabCounterPlus()
+{
+	retrieveExtStatus();
+
+	m_manifestRoot["tabCounter"] = getTabCounter() + 1;
+
+	commitChange();
+}
+
+void ExtStatus::tabCounterMinus()
+{
+	retrieveExtStatus();
+
+	m_manifestRoot["tabCounter"] = getTabCounter() - 1;
 
 	commitChange();
 }
@@ -115,6 +223,7 @@ void ExtStatus::setActiveTabInfo(int tabId, wstring title, wstring url)
 
 	int nIndex = WideCharToMultiByte(CP_ACP, 0, infoStr.c_str(), -1, NULL, 0, NULL, NULL);
 	char *pAnsi = new char[nIndex + 1];
+	ZeroMemory(pAnsi, nIndex + 1);
 	WideCharToMultiByte(CP_ACP, 0, infoStr.c_str(), -1, pAnsi, nIndex, NULL, NULL);
 	//delete pAnsi;
 
@@ -138,6 +247,8 @@ TCHAR* ExtStatus::getActiveTabInfo()
 	printf("getActiveTabInfo --> %s", tabInfoStr);
 	return tabInfoStr;
 }
+
+
 
 
 
