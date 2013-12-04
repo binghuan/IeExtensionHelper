@@ -63,9 +63,10 @@ void ExtStatus::retrieveExtStatus()
 
 		m_manifestRoot["isPopoverVisible"] = m_manifestRoot.get("isPopoverVisible", NULL);
 		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", NULL);
-		m_manifestRoot["localStorage"] = m_manifestRoot.get("localStorage", NULL);
-		m_manifestRoot["sessionStorage"] = m_manifestRoot.get("sessionStorage", NULL);
 		m_manifestRoot["tabCounter"] = m_manifestRoot.get("tabCounter", NULL);
+
+		//m_manifestRoot["localStorage"] = m_manifestRoot.get("localStorage", NULL);
+		//m_manifestRoot["sessionStorage"] = m_manifestRoot.get("sessionStorage", NULL);
 	}
 }
 

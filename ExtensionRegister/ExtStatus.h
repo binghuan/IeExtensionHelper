@@ -8,7 +8,7 @@
 using namespace Json;
 using namespace std;
 
-#define SHARE_VARIABLE_SIZE 9999999
+#define SHARE_VARIABLE_SIZE 8192
 
 class ExtStatus
 {

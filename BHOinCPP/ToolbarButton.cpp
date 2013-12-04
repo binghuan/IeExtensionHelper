@@ -266,7 +266,7 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 
 	if(g_PopupHwnd == NULL) {
 		g_PopupHwnd = CreateWindowEx (
-			0, 
+			WS_EX_TOOLWINDOW, 
 			className, 
 			className,//WindowName 
 			WS_EX_PALETTEWINDOW, 

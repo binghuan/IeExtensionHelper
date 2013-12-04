@@ -458,10 +458,8 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 						if(visible) {
 							OutputDebugString(L"IE Tab is Visible");
 							
-							if((m_IWebBrowser2BHO != NULL) 
-								&& (m_ExtStatus->getTabCounter() > 1) 
-								&& m_IsBackgroundPageInitialized == true) {
-							//if(false) {
+							//if((m_IWebBrowser2BHO != NULL) && (m_ExtStatus->getTabCounter() > 1) && m_IsBackgroundPageInitialized == true) {
+							if(false){
 								// restore localStroage.
 								CComPtr<IDispatch>   pHtmlDocDispatch;  
 								CComPtr<IHTMLDocument2>   m_pDocument;  
@@ -473,6 +471,20 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 									m_pDocument->get_parentWindow(&pWindow);
 									CComBSTR bstrLanguage = _T("javascript");
 									VARIANT vEmpty = {0};
+									
+									wstring restoreScript2 = L"(function(){";
+									restoreScript2 += L"var restoreData = ";
+									restoreScript2 += m_ExtStatus->getSessionStorageData();
+									restoreScript2 += L";";
+									restoreScript2 += L"sessionStorage.clear();";
+									restoreScript2 += L"for(var i=0; i< Object.keys(restoreData).length; i++) {";
+									restoreScript2 += L"sessionStorage[Object.keys(restoreData)[i]] = restoreData[Object.keys(restoreData)[i]];";
+									restoreScript2 += L"}";
+									restoreScript2 += L"console.warn(\"-> restore sessionStorage complete:\" + sessionStorage.testing + \" - \" + (new Date()).getTime());";
+									restoreScript2 += L"}());";
+									CComBSTR bstrScript2(restoreScript2.c_str());
+									hr = pWindow->execScript(bstrScript2,bstrLanguage,&vEmpty);
+
 									wstring restoreScript = L"(function(){";
 									restoreScript += L"console.warn(\"-> ready to restore localStorage:\" + \" - \" +(new Date()).getTime());";
 									restoreScript += L"var restoreData = ";
@@ -488,28 +500,15 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 									restoreScript += L"}());";
 									CComBSTR bstrScript(restoreScript.c_str());
 									hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
-
-									wstring restoreScript2 = L"(function(){";
-									restoreScript2 += L"var restoreData = ";
-									restoreScript2 += m_ExtStatus->getSessionStorageData();
-									restoreScript2 += L";";
-									restoreScript2 += L"sessionStorage.clear();";
-									restoreScript2 += L"for(var i=0; i< Object.keys(restoreData).length; i++) {";
-									restoreScript2 += L"sessionStorage[Object.keys(restoreData)[i]] = restoreData[Object.keys(restoreData)[i]];";
-									restoreScript2 += L"}";
-									restoreScript2 += L"console.warn(\"-> restore sessionStorage complete:\" + sessionStorage.testing + \" - \" + (new Date()).getTime());";
-									restoreScript2 += L"}());";
-									CComBSTR bstrScript2(restoreScript2.c_str());
-									hr = pWindow->execScript(bstrScript2,bstrLanguage,&vEmpty);
 								}
 
-							CComBSTR bstrName;
-							CComBSTR bstrUrl;
-							m_IWebBrowser2ContentScript->get_LocationName(&bstrName);
-							m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
+								CComBSTR bstrName;
+								CComBSTR bstrUrl;
+								m_IWebBrowser2ContentScript->get_LocationName(&bstrName);
+								m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
 
-							// need to implement dynamic tabID. 
-							m_ExtStatus->setActiveTabInfo( 99999999 , bstrName.m_str, bstrUrl.m_str);
+								// need to implement dynamic tabID. 
+								m_ExtStatus->setActiveTabInfo( 99999999 , bstrName.m_str, bstrUrl.m_str);
 								// notify tab is active
 								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
 								
@@ -518,8 +517,8 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 
 						} else {
 							OutputDebugString(L"IE Tab is not Visible");
-							backupStorage(1);
-							backupStorage(2);
+							//backupStorage(2);
+							//backupStorage(1);
 
 							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
 						}
