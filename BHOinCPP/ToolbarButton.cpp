@@ -269,7 +269,7 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 			WS_EX_TOOLWINDOW, 
 			className, 
 			className,//WindowName 
-			WS_EX_PALETTEWINDOW, 
+			0, 
 			POS_X_OF_POPUP, 
 			POS_Y_OF_POPUP, 
 			popupWidth, //nWidth 
@@ -280,7 +280,7 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 			NULL );	
 
 		SetWindowLong(g_PopupHwnd, GWL_STYLE, WS_BORDER|WS_THICKFRAME);
-		SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
+		SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, SWP_FRAMECHANGED);
 		ShowWindow (g_PopupHwnd, SW_SHOW);
 		SetForegroundWindow(g_PopupHwnd);
 		SetActiveWindow(g_PopupHwnd);
@@ -295,12 +295,14 @@ BOOL  RegisterAndCreateWindow( HINSTANCE hModule) {
 
 			DispatchMessage(&messages);
 		}
+	} else {
+		SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, SWP_FRAMECHANGED);
+		ShowWindow (g_PopupHwnd, SW_SHOW);
+		SetForegroundWindow(g_PopupHwnd);
+		SetActiveWindow(g_PopupHwnd);
 	}
 
-	SetWindowPos(g_PopupHwnd, NULL, POS_X_OF_POPUP, POS_Y_OF_POPUP, popupWidth, popupHeight, TRUE);
-	ShowWindow (g_PopupHwnd, SW_SHOW);
-	SetForegroundWindow(g_PopupHwnd);
-	SetActiveWindow(g_PopupHwnd);
+	
 	
 	
 	return result;	
