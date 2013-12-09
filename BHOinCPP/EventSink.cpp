@@ -12,8 +12,7 @@ using namespace std;
 
 // BH_Lin: testing GetExternal
 static boolean m_IsBackgroundPageInitialized;
-
-
+static boolean m_IsNeededToNotifyTabActivated;
 
 CEentSink::CEentSink(int componentID)
 {
@@ -34,6 +33,7 @@ CEentSink::CEentSink(int componentID)
 		break;
 	case IE_EXT_COMPONENT_BHO:
 		m_IsBackgroundPageInitialized = false;
+		m_IsNeededToNotifyTabActivated = true;
 		m_ExtStatus = new ExtStatus(m_IeExtBHOInfo.extenionID);
 		break;
 	}
@@ -406,7 +406,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 				{
 					_tprintf(TEXT("IE_EXT_COMPONENT_BHO"));
 					if(m_IsBackgroundPageInitialized == false) {
-						//m_IsBackgroundPageInitialized = true;
+						m_IsBackgroundPageInitialized = true;
 						EventNotifier::issueEvent(m_IWebBrowser2BHO, IE_EXT_EVENT_TAB_OPEN);
 					}
 				}
@@ -501,6 +501,10 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 									CComBSTR bstrScript(restoreScript.c_str());
 									hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 								}
+							}
+
+							if(m_IsBackgroundPageInitialized == true && m_IsNeededToNotifyTabActivated == true) {
+								m_IsNeededToNotifyTabActivated = false;
 
 								CComBSTR bstrName;
 								CComBSTR bstrUrl;
@@ -513,14 +517,14 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
 								
 							}
-							m_IsBackgroundPageInitialized = true;
 
 						} else {
 							OutputDebugString(L"IE Tab is not Visible");
 							//backupStorage(2);
 							//backupStorage(1);
-
 							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
+							m_IsNeededToNotifyTabActivated = true;
+							
 						}
 					}
 				}
