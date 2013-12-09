@@ -55,6 +55,7 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 #define DISPID_SET_POPOVER_INVISIBLE 123011
 #define DISPID_SET_POPOVER_VISIBLE 123012
 #define DISPID_OUTPUTDEBUGSTRING 123013
+#define DISPID_GET_POPOVER_PAGE 123014
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
@@ -79,6 +80,8 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 		*rgDispId = DISPID_DISPATCH_MSG_TO_BACKGROUND;
 	} else if(lstrcmp(rgszNames[0], L"getBackgroundPage")==0){
 		*rgDispId = DISPID_GET_BACKGROUND_PAGE;
+	} else if(lstrcmp(rgszNames[0], L"getPopoverPage")==0){
+		*rgDispId = DISPID_GET_POPOVER_PAGE;
 	} else if(lstrcmp(rgszNames[0], L"getActiveTab")==0){
 		*rgDispId = DISPID_GET_ACTIVE_TAB;
 	} else if(lstrcmp(rgszNames[0], L"getSelfTab")==0){
@@ -391,6 +394,28 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 				//pVarResult = pWindow;
 				pVarResult->vt = VT_DISPATCH;
 				pVarResult->pdispVal = (IDispatch *)pWindow;
+			}
+		}
+		break;
+	case DISPID_GET_POPOVER_PAGE:
+		{
+			printf("DISPID_GET_POPOVER_PAGE.\n");
+			CComPtr<IDispatch>   pHtmlDocDispatch;  
+			CComPtr<IHTMLDocument2>   m_pDocument;  
+			CComPtr<IDispatch>   m_pScript;  
+			if(m_IWebBrowser2Popover != NULL) {
+				HRESULT hr = m_IWebBrowser2Popover->get_Document((IDispatch**)&m_pDocument);
+				if(SUCCEEDED(hr)) {
+					CComPtr<IHTMLWindow2> pWindow;	
+					m_pDocument->get_parentWindow(&pWindow);
+					CComBSTR bstrLanguage = _T("javascript");
+
+					//pVarResult = pWindow;
+					pVarResult->vt = VT_DISPATCH;
+					pVarResult->pdispVal = (IDispatch *)pWindow;
+				}
+			} else {
+				hr = S_FALSE;
 			}
 		}
 		break;
