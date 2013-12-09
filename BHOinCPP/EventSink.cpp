@@ -530,6 +530,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 		}
 	}
 
+	/*
 	if(dispIdMember==DISPID_BEFORENAVIGATE2) { // Handle the BeforeNavigate2 event
 
 		VariantChangeType(&v[0],&pDispParams->rgvarg[5],0,VT_BSTR); // url
@@ -551,6 +552,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 		if(b) *(pDispParams->rgvarg[0].pboolVal)=VARIANT_TRUE;
 		else *(pDispParams->rgvarg[0].pboolVal)=VARIANT_FALSE;
 	}
+	*/
 	// Free the variants
 	for(n=0;n<5;n++) VariantClear(&v[n]);
 	return S_OK;
