@@ -40,7 +40,7 @@ ExtStatus::ExtStatus(string extensionID )
 
 		if(m_ValueBuffer == NULL || strlen(m_ValueBuffer) < 2) {
 			printf("!! init status value !!\r\n");
-			strcpy_s( (LPSTR) m_pViewMMFFile, SHARE_VARIABLE_SIZE, "{isPopoverVisible: false}");
+			strcpy_s( (LPSTR) m_pViewMMFFile, SHARE_VARIABLE_SIZE, "{isPopoverVisible: false, preferenceKeys: \"\"}");
 		}
 	}
 }
@@ -64,6 +64,21 @@ void ExtStatus::retrieveExtStatus()
 		m_manifestRoot["isPopoverVisible"] = m_manifestRoot.get("isPopoverVisible", NULL);
 		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", NULL);
 		m_manifestRoot["tabCounter"] = m_manifestRoot.get("tabCounter", NULL);
+		m_manifestRoot["preferenceKeys"] = m_manifestRoot.get("preferenceKeys", "");
+
+		Value preferenceKeys = m_manifestRoot.get("preferenceKeys", NULL);
+		if(preferenceKeys != NULL) {
+			//result = popupVisible.asBool();
+			string keys = preferenceKeys.asString();
+			std::string delimiter = ",";
+			size_t pos = 0;
+			std::string token;
+			while ((pos = keys.find(delimiter)) != std::string::npos) {
+				token = keys.substr(0, pos);
+				m_manifestRoot[token] = m_manifestRoot.get(token, NULL);
+				keys.erase(0, pos + delimiter.length());
+			}
+		}
 
 		//m_manifestRoot["localStorage"] = m_manifestRoot.get("localStorage", NULL);
 		//m_manifestRoot["sessionStorage"] = m_manifestRoot.get("sessionStorage", NULL);
@@ -247,6 +262,84 @@ TCHAR* ExtStatus::getActiveTabInfo()
 
 	printf("getActiveTabInfo --> %s", tabInfoStr);
 	return tabInfoStr;
+}
+
+TCHAR* ExtStatus::getSharedPreferences( wstring key, TCHAR* defaultValue)
+{
+	retrieveExtStatus();
+
+	_TCHAR returnStr[SHARE_VARIABLE_SIZE] = {0};
+	ZeroMemory(returnStr, SHARE_VARIABLE_SIZE);
+
+	int nIndex = WideCharToMultiByte(CP_ACP, 0, key.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsiKey = new char[nIndex + 1];
+	ZeroMemory(pAnsiKey, nIndex + 1);
+	WideCharToMultiByte(CP_ACP, 0, key.c_str(), -1, pAnsiKey, nIndex, NULL, NULL);
+
+	Value keyValue = m_manifestRoot.get(pAnsiKey, NULL);
+	if(keyValue != NULL) {
+		char* tempStr = const_cast<char*>(keyValue.asCString());	
+		Util::AnsiToUnicode16(tempStr, returnStr, SHARE_VARIABLE_SIZE);
+		wprintf(L"getSharedPreferences --> %s", returnStr);
+		return returnStr;
+	} else {
+
+		setSharedPreferences(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+void ExtStatus::setSharedPreferences( wstring key, wstring stringValue )
+{
+	retrieveExtStatus();
+
+	int nIndex = WideCharToMultiByte(CP_ACP, 0, key.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsiKey = new char[nIndex + 1];
+	ZeroMemory(pAnsiKey, nIndex + 1);
+	WideCharToMultiByte(CP_ACP, 0, key.c_str(), -1, pAnsiKey, nIndex, NULL, NULL);
+
+	nIndex = WideCharToMultiByte(CP_ACP, 0, stringValue.c_str(), -1, NULL, 0, NULL, NULL);
+	char *pAnsiValue = new char[nIndex + 1];
+	ZeroMemory(pAnsiValue, nIndex + 1);
+	WideCharToMultiByte(CP_ACP, 0, stringValue.c_str(), -1, pAnsiValue, nIndex, NULL, NULL);
+
+
+	Value preferenceKeys = m_manifestRoot.get("preferenceKeys", NULL);
+	if(preferenceKeys != NULL) {
+		string keys = preferenceKeys.asString();
+		std::string delimiter = ",";
+		size_t pos = 0;
+		std::string token;
+		string addedKeys = "";
+		int length = 0;
+		bool hit = false;
+		while ((pos = keys.find(delimiter)) != std::string::npos) {
+			length += 1;
+			token = keys.substr(0, pos);
+			addedKeys += token;
+			//strcmp(token.c_str(), pAnsiKey);
+			if(token.compare(pAnsiKey) == 0) {
+				hit = true;
+			}
+			//m_manifestRoot[token] = m_manifestRoot.get(token, NULL);
+			keys.erase(0, pos + delimiter.length());
+		}
+
+		if(hit == false) {
+			if(length > 0) {
+				addedKeys += ",";
+				addedKeys += pAnsiKey;
+			} else {
+				addedKeys = pAnsiKey;
+			}
+
+			m_manifestRoot["preferenceKeys"] = addedKeys;
+		}
+	}
+
+	m_manifestRoot[pAnsiKey] = pAnsiValue;
+	
+	commitChange();
 }
 
 

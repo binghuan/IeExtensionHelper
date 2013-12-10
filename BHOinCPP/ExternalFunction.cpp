@@ -57,6 +57,9 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetTypeInfo( UINT iTInfo, LCID lcid,
 #define DISPID_OUTPUTDEBUGSTRING 123013
 #define DISPID_GET_POPOVER_PAGE 123014
 
+#define DISPID_SET_SHARED_PREFERENCES 123015
+#define DISPID_GET_SHARED_PREFERENCES 123016
+
 HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames( 
 	__RPC__in REFIID riid, 
 	__RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, 
@@ -74,6 +77,10 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 	if(lstrcmp(rgszNames[0], L"messagebox")==0){
 		_tprintf(_T("get function call: messagebox"));
 		*rgDispId = DISPID_CB_CUSTOMFUNTION;
+	} else if(lstrcmp(rgszNames[0], L"getSharedPreferences")==0){
+		*rgDispId = DISPID_GET_SHARED_PREFERENCES;
+	} else if(lstrcmp(rgszNames[0], L"setSharedPreferences")==0){
+		*rgDispId = DISPID_SET_SHARED_PREFERENCES;
 	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2ContentScript")==0){
 		*rgDispId = DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT;
 	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2Background")==0){
@@ -134,6 +141,26 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 	HRESULT hr = S_OK;
 
 	switch(dispIdMember) {
+	case DISPID_SET_SHARED_PREFERENCES:
+		{
+			ExtStatus *extStatus = new ExtStatus(m_IeExtBHOInfo.extenionID);
+
+			// get key
+			// pDispParams->rgvarg[1].bstrVal
+			// get value
+			// pDispParams->rgvarg[0].bstrVal
+
+			extStatus->setSharedPreferences(pDispParams->rgvarg[1].bstrVal, pDispParams->rgvarg[0].bstrVal);
+		}
+		break;
+	case DISPID_GET_SHARED_PREFERENCES:
+		{
+			ExtStatus *extStatus = new ExtStatus(m_IeExtBHOInfo.extenionID);
+			VariantInit(pVarResult);
+			V_VT(pVarResult)=VT_BSTR;
+			V_BSTR(pVarResult) = SysAllocString(extStatus->getSharedPreferences(pDispParams->rgvarg[1].bstrVal,pDispParams->rgvarg[0].bstrVal));
+		}
+		break;
 	case DISPID_OUTPUTDEBUGSTRING:
 		{
 			OutputDebugString(pDispParams->rgvarg[0].bstrVal);

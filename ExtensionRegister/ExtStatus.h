@@ -25,6 +25,11 @@ public:
 
 	void retrieveExtStatus();
 	void commitChange();
+
+	TCHAR* getSharedPreferences(wstring key, TCHAR* defaulValue);
+	void setSharedPreferences(wstring key, wstring stringValue);
+
+
 	void setLocalStorageData(wstring localStorageStr);
 	wstring getLocalStorageData();
 	void setSessionStorageData(wstring localStorageStr);
