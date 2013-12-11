@@ -121,7 +121,7 @@ void CppCall()
 }
 
 
-int m_TabID = 99999999;
+int m_TabID = 9999;
 
 HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember, 
 												   _In_ REFIID riid, 

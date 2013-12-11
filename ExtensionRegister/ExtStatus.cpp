@@ -229,13 +229,13 @@ void ExtStatus::setActiveTabInfo(int tabId, wstring title, wstring url)
 	swprintf_s( tabIDStr, MAX_PATH, _T("%d"),  tabId);
 
 	wstring infoStr = L"{";
-	infoStr += L"id:";
+	infoStr += L"\"id\":";
 	infoStr += tabIDStr;
 	infoStr += L",";
-	infoStr += L"title:'" + title;
-	infoStr += L"',";
-	infoStr += L"url:'" + url;
-	infoStr += L"'}";
+	infoStr += L"\"title\":\"" + title;
+	infoStr += L"\",";
+	infoStr += L"\"url\":\"" + url;
+	infoStr += L"\"}";
 
 	int nIndex = WideCharToMultiByte(CP_ACP, 0, infoStr.c_str(), -1, NULL, 0, NULL, NULL);
 	char *pAnsi = new char[nIndex + 1];
@@ -253,6 +253,7 @@ TCHAR* ExtStatus::getActiveTabInfo()
 {
 	retrieveExtStatus();
 	_TCHAR* tabInfoStr = new _TCHAR[SHARE_VARIABLE_SIZE];
+	ZeroMemory(tabInfoStr, SHARE_VARIABLE_SIZE);
 
 	Value activeTabInfo = m_manifestRoot.get("activeTab", NULL);
 	if(activeTabInfo != NULL) {

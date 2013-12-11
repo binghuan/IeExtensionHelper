@@ -268,11 +268,12 @@ void CEentSink::exportExternalFunction(int componentID) {
 		{
 			char *scriptBuff = Util::readInputFile(m_IeExtContentScriptInfo.javascriptsAtEnd[i]);
 			string script(scriptBuff);
+			contentString += "\n";
 			contentString += script;
 		}
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
-			contentString += "return {";
+			contentString += " return {";
 			contentString += "onIeExtensionMsgContentScriptReceive: function() { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive();}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
 			contentString += "};";
 			contentString += "})();";
@@ -512,7 +513,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 								m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
 
 								// need to implement dynamic tabID. 
-								m_ExtStatus->setActiveTabInfo( 99999999 , bstrName.m_str, bstrUrl.m_str);
+								m_ExtStatus->setActiveTabInfo( 9999 , bstrName.m_str, bstrUrl.m_str);
 								// notify tab is active
 								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
 								
