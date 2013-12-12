@@ -158,7 +158,12 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			ExtStatus *extStatus = new ExtStatus(m_IeExtBHOInfo.extenionID);
 			VariantInit(pVarResult);
 			V_VT(pVarResult)=VT_BSTR;
-			V_BSTR(pVarResult) = SysAllocString(extStatus->getSharedPreferences(pDispParams->rgvarg[1].bstrVal,pDispParams->rgvarg[0].bstrVal));
+			if(pDispParams->cArgs > 1) {
+				V_BSTR(pVarResult) = SysAllocString(extStatus->getSharedPreferences(pDispParams->rgvarg[1].bstrVal,pDispParams->rgvarg[0].bstrVal));
+			} else {
+				V_BSTR(pVarResult) = SysAllocString(extStatus->getSharedPreferences(pDispParams->rgvarg[0].bstrVal, L""));
+			}
+			
 		}
 		break;
 	case DISPID_OUTPUTDEBUGSTRING:
