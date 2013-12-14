@@ -62,7 +62,7 @@ void ExtStatus::retrieveExtStatus()
 		reader.parse(m_ValueBuffer, m_manifestRoot);
 
 		m_manifestRoot["isPopoverVisible"] = m_manifestRoot.get("isPopoverVisible", NULL);
-		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", NULL);
+		m_manifestRoot["activeTab"] = m_manifestRoot.get("activeTab", "{\"id\": 9999, \"title\": \"\", \"url\": \"\"}");
 		m_manifestRoot["tabCounter"] = m_manifestRoot.get("tabCounter", NULL);
 		m_manifestRoot["preferenceKeys"] = m_manifestRoot.get("preferenceKeys", "");
 
