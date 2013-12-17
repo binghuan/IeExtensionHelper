@@ -7,7 +7,7 @@
     </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WebBrowserDebugger</DebuggerFlavor>
     <WebBrowserDebuggerDebuggerType>Auto</WebBrowserDebuggerDebuggerType>
-    <WebBrowserDebuggerHttpUrl>http://www.plurk.com</WebBrowserDebuggerHttpUrl>
+    <WebBrowserDebuggerHttpUrl>https://accounts.google.com/SignUp</WebBrowserDebuggerHttpUrl>
     <LocalDebuggerAttach>false</LocalDebuggerAttach>
     <LocalDebuggerDebuggerType>NativeOnly</LocalDebuggerDebuggerType>
   </PropertyGroup>

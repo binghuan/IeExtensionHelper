@@ -37,4 +37,5 @@ extern HWND g_PopupHwnd;
 #define IE_EXT_EVENT_TAB_ACTIVATE L"onIeExtensionEventTabActivate"
 #define IE_EXT_EVENT_TAB_OPEN L"onIeExtensionEventTabOpen"
 
+#define DEFAULT_TAB_ID 9999
 #endif // __COMMON_H__

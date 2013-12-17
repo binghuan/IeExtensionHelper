@@ -408,7 +408,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 					_tprintf(TEXT("IE_EXT_COMPONENT_BHO"));
 					if(m_IsBackgroundPageInitialized == false) {
 						m_IsBackgroundPageInitialized = true;
-						EventNotifier::issueEvent(m_IWebBrowser2BHO, IE_EXT_EVENT_TAB_OPEN);
+						EventNotifier::issueTabEvent(m_IWebBrowser2BHO, IE_EXT_EVENT_TAB_OPEN, DEFAULT_TAB_ID);
 					}
 				}
 				break;
@@ -513,9 +513,9 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 								m_IWebBrowser2ContentScript->get_LocationURL(&bstrUrl);
 
 								// need to implement dynamic tabID. 
-								m_ExtStatus->setActiveTabInfo( 9999 , bstrName.m_str, bstrUrl.m_str);
+								m_ExtStatus->setActiveTabInfo( DEFAULT_TAB_ID , bstrName.m_str, bstrUrl.m_str);
 								// notify tab is active
-								EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE);
+								EventNotifier::issueTabEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_ACTIVATE, DEFAULT_TAB_ID);
 								
 							}
 
@@ -523,7 +523,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 							OutputDebugString(L"IE Tab is not Visible");
 							//backupStorage(2);
 							//backupStorage(1);
-							EventNotifier::issueEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE);
+							EventNotifier::issueTabEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE, DEFAULT_TAB_ID);
 							m_IsNeededToNotifyTabActivated = true;
 							
 						}

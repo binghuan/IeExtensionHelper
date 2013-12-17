@@ -101,7 +101,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <RegisterOutput>false</RegisterOutput>
       <PerUserRedirection>true</PerUserRedirection>
-      <AdditionalDependencies>json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Urlmon.lib;json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>jsoncpp_5_0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <StackReserveSize>99999999</StackReserveSize>
     </Link>
