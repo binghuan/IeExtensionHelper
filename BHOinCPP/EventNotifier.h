@@ -33,8 +33,6 @@ public:
 			hr = m_pScript->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
 			if (SUCCEEDED(hr))  
 			{  
-				CComBSTR bstrMember = _T("onIeExtensionMsgBackgroundReceive");
-
 				if (hr == S_OK)  
 				{  
 					CComQIPtr<IHTMLWindow2> pWindow;	
