@@ -274,6 +274,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
 			contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
+			contentString += " if((typeof eventMessage) === \"string\" ||((typeof eventMessage) === \"object\") ) {eventMessage = JSON.stringify(eventMessage)}";
 			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, eventMessage);";
 			contentString += " }";
 			contentString += " return {";
