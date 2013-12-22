@@ -16,7 +16,7 @@ static boolean m_IsNeededToNotifyTabActivated;
 
 CEentSink::CEentSink(int componentID)
 {
-	extFun = new DocUIHandler();
+	extFun = new DocUIHandler(componentID);
 	m_componentID = componentID;
 
 
@@ -273,8 +273,11 @@ void CEentSink::exportExternalFunction(int componentID) {
 		}
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
+			contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
+			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, eventMessage);";
+			contentString += " }";
 			contentString += " return {";
-			contentString += "onIeExtensionMsgContentScriptReceive: function() { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive();}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
+			contentString += "onIeExtensionMsgContentScriptReceive: function(event) { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive(event);}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
 			contentString += "};";
 			contentString += "})();";
 		}

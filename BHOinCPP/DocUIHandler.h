@@ -7,6 +7,7 @@ class DocUIHandler: public IDocHostUIHandler
 {
 public:
 	DocUIHandler(void);
+	DocUIHandler(int componentID);
 	~DocUIHandler(void);
 
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, void **ppvObject );
@@ -45,5 +46,6 @@ public:
 
 	virtual HRESULT STDMETHODCALLTYPE FilterDataObject( _In_ IDataObject *pDO, _Outptr_result_maybenull_ IDataObject **ppDORet );
 
+	int m_registeredComponentID;
 	ExternalFunction *pClientCall ;
 };

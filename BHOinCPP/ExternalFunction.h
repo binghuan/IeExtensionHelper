@@ -6,6 +6,7 @@ class ExternalFunction: public IDispatch
 {
 public:
 	ExternalFunction(void);
+	ExternalFunction(int componentID);
 	~ExternalFunction(void);
 
 	virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount( __RPC__out UINT *pctinfo );
@@ -26,5 +27,7 @@ public:
 	IeExtContentScriptInfo m_IeExtContentScriptInfo;
 	IeExtToolbarButtonInfo m_IeExtToolbarButtonInfo;
 	IeExtBHOInfo m_IeExtBHOInfo;
+
+	int m_registeredComponentID;
 };
 

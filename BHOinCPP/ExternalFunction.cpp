@@ -10,10 +10,17 @@
 
 ExternalFunction::ExternalFunction(void)
 {
+	
+}
+
+ExternalFunction::ExternalFunction( int componentID )
+{
 	IeManifestParser *manifestParser = new IeManifestParser(hInstance);
 	m_IeExtContentScriptInfo = manifestParser->getIeExtContentScriptInfo();
 	m_IeExtToolbarButtonInfo = manifestParser->getIeExtToolbarButtonInfo();
 	m_IeExtBHOInfo = manifestParser->getIeExtBHOInfo();
+
+	m_registeredComponentID = componentID;
 }
 
 
@@ -74,42 +81,59 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::GetIDsOfNames(
 
 	HRESULT hr = NOERROR;
 
-	if(lstrcmp(rgszNames[0], L"messagebox")==0){
-		_tprintf(_T("get function call: messagebox"));
-		*rgDispId = DISPID_CB_CUSTOMFUNTION;
-	} else if(lstrcmp(rgszNames[0], L"getSharedPreferences")==0){
-		*rgDispId = DISPID_GET_SHARED_PREFERENCES;
-	} else if(lstrcmp(rgszNames[0], L"setSharedPreferences")==0){
-		*rgDispId = DISPID_SET_SHARED_PREFERENCES;
-	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2ContentScript")==0){
-		*rgDispId = DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT;
-	} else if(lstrcmp(rgszNames[0], L"dispatchMessage2Background")==0){
-		*rgDispId = DISPID_DISPATCH_MSG_TO_BACKGROUND;
-	} else if(lstrcmp(rgszNames[0], L"getBackgroundPage")==0){
-		*rgDispId = DISPID_GET_BACKGROUND_PAGE;
-	} else if(lstrcmp(rgszNames[0], L"getPopoverPage")==0){
-		*rgDispId = DISPID_GET_POPOVER_PAGE;
-	} else if(lstrcmp(rgszNames[0], L"getActiveTab")==0){
-		*rgDispId = DISPID_GET_ACTIVE_TAB;
-	} else if(lstrcmp(rgszNames[0], L"getSelfTab")==0){
-		*rgDispId = DISPID_GET_SELF_TAB;
-	} else if(lstrcmp(rgszNames[0], L"setSelfTabUrl")==0){
-		*rgDispId = DISPID_SET_SELF_TAB_URL;
-	} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
-		*rgDispId = DISPID_OPEN_NEW_TAB;
-	} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
-		*rgDispId = DISPID_IS_POPOVER_VISIBLE;
-	} else if(lstrcmp(rgszNames[0], L"setPopoverInvisible")==0){
-		*rgDispId = DISPID_SET_POPOVER_INVISIBLE;
-	} else if(lstrcmp(rgszNames[0], L"setPopoverVisible")==0){
-		*rgDispId = DISPID_SET_POPOVER_VISIBLE;
-	} else if(lstrcmp(rgszNames[0], L"executeScriptInTab")==0){
-		*rgDispId = DISPID_EXECUTE_SCRIPT_IN_TAB;
-	} else if(lstrcmp(rgszNames[0], L"outputDebugString")==0){
-		*rgDispId = DISPID_OUTPUTDEBUGSTRING;
+	// just export some HTML external objects to content Script (the front web page)
+	if(m_registeredComponentID == IE_EXT_COMPONENT_CONTENTSCRIPT) {
+		wstring requiredFunction = rgszNames[0];
+		char *tempStr = const_cast<char* > (m_IeExtContentScriptInfo.extenionID.c_str());
+		TCHAR *extensionID = new TCHAR[MAX_PATH];
+		Util::AnsiToUnicode16(tempStr, extensionID, MAX_PATH);
+		wstring extId = extensionID;
+		wstring targetFunction = extId + L"dispatchMessage2Background";
+		//wstring targetFunction =L"dispatchMessage2Background";
+
+		if(requiredFunction.compare(targetFunction) == 0) 
+		{
+			*rgDispId = DISPID_DISPATCH_MSG_TO_BACKGROUND;
+		} else {
+			*rgDispId = DISP_E_UNKNOWNNAME;
+			hr = ResultFromScode(DISP_E_UNKNOWNNAME);
+		}
 	} else {
-		*rgDispId = DISP_E_UNKNOWNNAME;
-		hr = ResultFromScode(DISP_E_UNKNOWNNAME);
+		if(lstrcmp(rgszNames[0], L"messagebox")==0){
+			_tprintf(_T("get function call: messagebox"));
+			*rgDispId = DISPID_CB_CUSTOMFUNTION;
+		} else if(lstrcmp(rgszNames[0], L"getSharedPreferences")==0){
+			*rgDispId = DISPID_GET_SHARED_PREFERENCES;
+		} else if(lstrcmp(rgszNames[0], L"setSharedPreferences")==0){
+			*rgDispId = DISPID_SET_SHARED_PREFERENCES;
+		} else if(lstrcmp(rgszNames[0], L"dispatchMessage2ContentScript")==0){
+			*rgDispId = DISPID_DISPATCH_MSG_TO_CONTENTSCRIPT;
+		} else if(lstrcmp(rgszNames[0], L"getBackgroundPage")==0){
+			*rgDispId = DISPID_GET_BACKGROUND_PAGE;
+		} else if(lstrcmp(rgszNames[0], L"getPopoverPage")==0){
+			*rgDispId = DISPID_GET_POPOVER_PAGE;
+		} else if(lstrcmp(rgszNames[0], L"getActiveTab")==0){
+			*rgDispId = DISPID_GET_ACTIVE_TAB;
+		} else if(lstrcmp(rgszNames[0], L"getSelfTab")==0){
+			*rgDispId = DISPID_GET_SELF_TAB;
+		} else if(lstrcmp(rgszNames[0], L"setSelfTabUrl")==0){
+			*rgDispId = DISPID_SET_SELF_TAB_URL;
+		} else if(lstrcmp(rgszNames[0], L"openNewTab")==0){
+			*rgDispId = DISPID_OPEN_NEW_TAB;
+		} else if(lstrcmp(rgszNames[0], L"isPopoverVisible")==0){
+			*rgDispId = DISPID_IS_POPOVER_VISIBLE;
+		} else if(lstrcmp(rgszNames[0], L"setPopoverInvisible")==0){
+			*rgDispId = DISPID_SET_POPOVER_INVISIBLE;
+		} else if(lstrcmp(rgszNames[0], L"setPopoverVisible")==0){
+			*rgDispId = DISPID_SET_POPOVER_VISIBLE;
+		} else if(lstrcmp(rgszNames[0], L"executeScriptInTab")==0){
+			*rgDispId = DISPID_EXECUTE_SCRIPT_IN_TAB;
+		} else if(lstrcmp(rgszNames[0], L"outputDebugString")==0){
+			*rgDispId = DISPID_OUTPUTDEBUGSTRING;
+		} else {
+			*rgDispId = DISP_E_UNKNOWNNAME;
+			hr = ResultFromScode(DISP_E_UNKNOWNNAME);
+		}
 	}
 
 	return hr;
@@ -387,10 +411,10 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			VARIANT extensionObj;
 			VariantInit(&extensionObj);
 			char* tempStr = const_cast<char*>(m_IeExtContentScriptInfo.extenionID.c_str());
-			_TCHAR* propertyName = new _TCHAR[MAX_PATH];
-			Util::AnsiToUnicode16(tempStr, propertyName, MAX_PATH);
+			_TCHAR* propertyNameOfExtId = new _TCHAR[MAX_PATH];
+			Util::AnsiToUnicode16(tempStr, propertyNameOfExtId, MAX_PATH);
 
-			hr = Util::GetProperty(m_pScript, propertyName, &extensionObj);
+			hr = Util::GetProperty(m_pScript, propertyNameOfExtId, &extensionObj);
 
 			CComBSTR bstrMember = _T("onIeExtensionMsgContentScriptReceive");
 			DISPID dispid;
@@ -398,16 +422,35 @@ HRESULT STDMETHODCALLTYPE ExternalFunction::Invoke( _In_ DISPID dispIdMember,
 			hr = extensionObj.pdispVal->GetIDsOfNames(IID_NULL,&bstrMember,1,LOCALE_SYSTEM_DEFAULT,&dispid);  
 			if (SUCCEEDED(hr))  
 			{  
+				//extensionObj.pdispVal->Invoke()
 				CComQIPtr<IHTMLWindow2> pWindow;	
 				m_pDocument->get_parentWindow(&pWindow);
 				CComBSTR bstrLanguage = _T("javascript");
 				VARIANT vEmpty = {0};
 
+				/*
+				wstring script = propertyNameOfExtId;
+				script += L".onIeExtensionMsgContentScriptReceive(";
+				script += L"{";
+				script += L"name:\"";
+				script += pDispParams->rgvarg[1].bstrVal;
+				script += L"\",";
+				script += L"\"message\":";
+				//script += L"'";
+				script += pDispParams->rgvarg[0].bstrVal;
+				//script += L"'";
+				script += L"}";
+				script += L");";
+
+				CComBSTR bstrScript(script.c_str());
+				*/
+
 				TCHAR *scriptBuff = new TCHAR[BUFFERSIZE];
-				swprintf_s(scriptBuff, BUFFERSIZE, L"onIeExtensionMsgContentScriptReceive({\"name\":\"%s\",\"message\":'%s'});", pDispParams->rgvarg[1].bstrVal, pDispParams->rgvarg[0].bstrVal);
-				
+				swprintf_s(scriptBuff, BUFFERSIZE, L"%s.onIeExtensionMsgContentScriptReceive({\"name\":\"%s\",\"message\":%s});", propertyNameOfExtId,pDispParams->rgvarg[1].bstrVal, pDispParams->rgvarg[0].bstrVal);
 				CComBSTR bstrScript(scriptBuff);
+
 				hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+				delete scriptBuff;
 			}  
 		}
 		break;

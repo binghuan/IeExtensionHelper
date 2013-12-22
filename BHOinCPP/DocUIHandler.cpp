@@ -10,6 +10,11 @@ DocUIHandler::DocUIHandler(void)
 {
 }
 
+DocUIHandler::DocUIHandler( int componentID )
+{
+	m_registeredComponentID = componentID;
+}
+
 
 DocUIHandler::~DocUIHandler(void)
 {
@@ -78,7 +83,7 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::GetExternal( _Outptr_result_maybenull_ I
 
 	//this->QueryInterface(IID_IDispatch, (void**)&ppDispatch);
 	
-	pClientCall = new ExternalFunction();
+	pClientCall = new ExternalFunction(m_registeredComponentID);
 	*ppDispatch = pClientCall;
 
 
