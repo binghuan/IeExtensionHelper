@@ -279,8 +279,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
 			contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
-			contentString += " if((typeof eventMessage) === \"string\" || ((typeof eventMessage) === \"object\") || ((typeof eventMessage) === \"number\") ) {eventMessage = JSON.stringify(eventMessage)}";
-			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, eventMessage);";
+			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, JSON.stringify(eventMessage));";
 			contentString += " }";
 			contentString += " return {";
 			contentString += "onIeExtensionMsgContentScriptReceive: function(event) { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive(event);}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
