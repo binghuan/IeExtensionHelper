@@ -48,4 +48,8 @@ public:
 
 	int m_registeredComponentID;
 	ExternalFunction *pClientCall ;
+
+	// Default interface pointers
+	CComQIPtr<IDocHostUIHandler, &IID_IDocHostUIHandler> m_spDefaultDocHostUIHandler;
+	CComQIPtr<IOleCommandTarget, &IID_IOleCommandTarget> m_spDefaultOleCommandTarget;
 };

@@ -130,7 +130,8 @@ void CEentSink::exportExternalFunction(int componentID) {
 		if (SUCCEEDED(hr) && spClientSite)
 		{
 			// Save pointer for delegation to default 
-			//m_spDefaultDocHostUIHandler = spClientSite;
+			extFun->m_spDefaultDocHostUIHandler = spClientSite;
+			extFun->m_spDefaultOleCommandTarget = spClientSite;
 		}
 
 		// Set the new custom IDocHostUIHandler

@@ -10,7 +10,7 @@ DocUIHandler::DocUIHandler(void)
 {
 }
 
-DocUIHandler::DocUIHandler( int componentID )
+DocUIHandler::DocUIHandler(int componentID)
 {
 	m_registeredComponentID = componentID;
 }
@@ -19,8 +19,6 @@ DocUIHandler::DocUIHandler( int componentID )
 DocUIHandler::~DocUIHandler(void)
 {
 }
-
-//DocUIHandler extFun;
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::QueryInterface( REFIID riid, void **ppvObject )
 {
@@ -104,17 +102,27 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::ShowContextMenu( _In_ DWORD dwID,
 														_In_ IUnknown *pcmdtReserved, 
 														_In_ IDispatch *pdispReserved )
 {
+	/*
 	UNREFERENCED_PARAMETER(dwID);
 	UNREFERENCED_PARAMETER(ppt);
 	UNREFERENCED_PARAMETER(pcmdtReserved);
 	UNREFERENCED_PARAMETER(pdispReserved);
+	*/
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->ShowContextMenu(dwID, ppt, pcmdtReserved, pdispReserved);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::GetHostInfo( _Inout_ DOCHOSTUIINFO *pInfo )
 {
-	UNREFERENCED_PARAMETER(pInfo);
+	//UNREFERENCED_PARAMETER(pInfo);
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->GetHostInfo(pInfo);
+	}
 
 	return E_NOINTERFACE;
 }
@@ -125,68 +133,105 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::ShowUI( _In_ DWORD dwID,
 											   _In_ IOleInPlaceFrame *pFrame, 
 											   _In_ IOleInPlaceUIWindow *pDoc )
 {
+	/*
 	UNREFERENCED_PARAMETER(dwID);
 	UNREFERENCED_PARAMETER(pActiveObject);
 	UNREFERENCED_PARAMETER(pCommandTarget);
 	UNREFERENCED_PARAMETER(pFrame);
 	UNREFERENCED_PARAMETER(pDoc);
+	*/
 
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->ShowUI(dwID, pActiveObject, pCommandTarget, pFrame, pDoc );
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::HideUI( void )
 {
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->HideUI();
+	}
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::UpdateUI( void )
 {
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->UpdateUI();
+	}
+
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::EnableModeless( BOOL fEnable )
 {
-	UNREFERENCED_PARAMETER(fEnable);
+	//UNREFERENCED_PARAMETER(fEnable);
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->EnableModeless(fEnable);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::OnDocWindowActivate( BOOL fActivate )
 {
-	UNREFERENCED_PARAMETER(fActivate);
+	//UNREFERENCED_PARAMETER(fActivate);
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->OnDocWindowActivate(fActivate);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::OnFrameWindowActivate( BOOL fActivate )
 {
-	UNREFERENCED_PARAMETER(fActivate);
+	//UNREFERENCED_PARAMETER(fActivate);
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->OnFrameWindowActivate(fActivate);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::ResizeBorder( _In_ LPCRECT prcBorder, _In_ IOleInPlaceUIWindow *pUIWindow, _In_ BOOL fRameWindow )
 {
+	/*
 	UNREFERENCED_PARAMETER(prcBorder);
 	UNREFERENCED_PARAMETER(pUIWindow);
 	UNREFERENCED_PARAMETER(fRameWindow);
+	*/
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->ResizeBorder(prcBorder, pUIWindow, fRameWindow);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::TranslateAccelerator( LPMSG lpMsg, const GUID *pguidCmdGroup, DWORD nCmdID )
 {
+	/*
 	UNREFERENCED_PARAMETER(pguidCmdGroup);
 	UNREFERENCED_PARAMETER(nCmdID);
 
 	HRESULT hr = S_FALSE;
-
 	if (lpMsg && lpMsg->message == WM_KEYDOWN && lpMsg->wParam == VK_TAB) {
 		// The message was handled.
 		hr = S_OK;
 	}
-	return hr;
+	*/
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->TranslateAccelerator(lpMsg, pguidCmdGroup, nCmdID);
+	}
+
+	return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::GetOptionKeyPath( _Out_ LPOLESTR *pchKey, DWORD dw )
@@ -207,17 +252,29 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::GetDropTarget( _In_ IDropTarget *pDropTa
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::TranslateUrl( DWORD dwTranslate, _In_ LPWSTR pchURLIn, _Outptr_ LPWSTR *ppchURLOut )
 {
+	/*
 	UNREFERENCED_PARAMETER(dwTranslate);
 	UNREFERENCED_PARAMETER(pchURLIn);
 	UNREFERENCED_PARAMETER(ppchURLOut);
+	*/
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->TranslateUrl(dwTranslate, pchURLIn, ppchURLOut);
+	}
 
 	return E_NOINTERFACE;
 }
 
 HRESULT STDMETHODCALLTYPE DocUIHandler::FilterDataObject( _In_ IDataObject *pDO, _Outptr_result_maybenull_ IDataObject **ppDORet )
 {
+	/*
 	UNREFERENCED_PARAMETER(pDO);
 	UNREFERENCED_PARAMETER(ppDORet);
+	*/
+
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->FilterDataObject(pDO, ppDORet);
+	}
 
 	return E_NOINTERFACE;
 }
