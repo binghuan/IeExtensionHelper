@@ -218,6 +218,10 @@ void CEentSink::exportExternalFunction(int componentID) {
 			javaScript += L"return cloneSessionStroageStr;";
 			javaScript += L"}";
 			javaScript += L"};";
+
+			javaScript += L"function windowExternalDispatchMessage2ContentScript(eventName, evnetData) {";
+			javaScript += L"window.external.dispatchMessage2ContentScript(eventName, JSON.stringify(evnetData));";
+			javaScript += L"};";
 		
 			CComBSTR bstrScript(javaScript.c_str());
 			
@@ -275,7 +279,7 @@ void CEentSink::exportExternalFunction(int componentID) {
 
 		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
 			contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
-			contentString += " if((typeof eventMessage) === \"string\" ||((typeof eventMessage) === \"object\") ) {eventMessage = JSON.stringify(eventMessage)}";
+			contentString += " if((typeof eventMessage) === \"string\" || ((typeof eventMessage) === \"object\") || ((typeof eventMessage) === \"number\") ) {eventMessage = JSON.stringify(eventMessage)}";
 			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, eventMessage);";
 			contentString += " }";
 			contentString += " return {";
