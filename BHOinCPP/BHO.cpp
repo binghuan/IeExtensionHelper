@@ -77,7 +77,7 @@ STDMETHODIMP CBHO::SetSite(IUnknown *pUnkSite)
 		varMyURL.bstrVal = SysAllocString(m_IeExtBHOInfo.page);
 		hr = m_IWebBrowser2BHO-> Navigate2(&varMyURL,0,0,0,0);
 
-		ConnectEventSink2BHO(m_IWebBrowser2BHO);
+		ConnectEventSink2BHO(m_IWebBrowser2BHO);// background page.
 	}
 	// BH_Lin@201310121	-------------------------------------------------<
 

@@ -248,53 +248,15 @@ void CEentSink::exportExternalFunction(int componentID) {
 			hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 	}
 
-	// BH_Lin@20131030	--------------------------------------------->
-	// purpose: inject content script.
-					
+
 	if((componentID == IE_EXT_COMPONENT_CONTENTSCRIPT) &&
 		(m_IeExtContentScriptInfo.isDefined == TRUE)
 		//&& false
-		) {
-
-		CComQIPtr<IHTMLWindow2> pWindow;	
-		m_pDocument->get_parentWindow(&pWindow);
-		CComBSTR bstrLanguage = _T("javascript");
-		VARIANT vEmpty = {0};
-
-		string contentString ;
-
-		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
-			contentString += "var " ;
-			contentString += m_IeExtContentScriptInfo.extenionID;
-			contentString += " = (function(){ " ;
-		}
-
-		for(int i = 0; i< (int)m_IeExtContentScriptInfo.javascriptsAtEnd.size(); i++)
-		{
-			char *scriptBuff = Util::readInputFile(m_IeExtContentScriptInfo.javascriptsAtEnd[i]);
-			string script(scriptBuff);
-			contentString += "\n";
-			contentString += script;
-		}
-
-		if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
-			contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
-			contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, JSON.stringify(eventMessage));";
-			contentString += " }";
-			contentString += " return {";
-			contentString += "onIeExtensionMsgContentScriptReceive: function(event) { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive(event);}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
-			contentString += "};";
-			contentString += "})();";
-		}
-
-		CComBSTR bstrScript(contentString.c_str());
-		hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+		) 
+	{
+		injectContentScript();
 	}
-					
-					
-	// BH_Lin@20131030	---------------------------------------------<
 
-	_tprintf(TEXT("Done: IE_EXT_COMPONENT_CONTENTSCRIPT"));
 }
 
 void CEentSink::backupStorage(int storageType) {
@@ -366,15 +328,22 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 	UNREFERENCED_PARAMETER(pVarResult);
 	UNREFERENCED_PARAMETER(pExcepInfo);
 	UNREFERENCED_PARAMETER(puArgErr);
-	VARIANT v[5]; // Used to hold converted event parameters before passing them onto the event handling method
+	//VARIANT v[5]; // Used to hold converted event parameters before passing them onto the event handling method
+	VARIANT pDispParamsUrl;
+	VariantInit(&pDispParamsUrl);
+	VariantChangeType(&pDispParamsUrl,&pDispParams->rgvarg[0],0,VT_BSTR); // url
+
 	int n;
 	bool b;
 	PVOID pv;
 	LONG lbound,ubound,sz;
 
-	if(!IsEqualIID(riid,IID_NULL)) return DISP_E_UNKNOWNINTERFACE; // riid should always be IID_NULL
+	if(!IsEqualIID(riid,IID_NULL)) 
+	{
+		return DISP_E_UNKNOWNINTERFACE; // riid should always be IID_NULL
+	}
 	// Initialize the variants
-	for(n=0;n<5;n++) VariantInit(&v[n]);
+	//for(n=0;n<5;n++) VariantInit(&v[n]);
 
 	switch(dispIdMember) {
 	case DISPID_NAVIGATEERROR:
@@ -390,18 +359,32 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 		break;
 	case DISPID_BEFORENAVIGATE2:
 		{
-			_tprintf(TEXT("DISPID_BEFORENAVIGATE2"));
+			switch(m_componentID) {
+			case IE_EXT_COMPONENT_CONTENTSCRIPT:
+				{
+					OutputDebugString(L"\DISPID_BEFORENAVIGATE2: _");
+					OutputDebugString(pDispParamsUrl.bstrVal);
+					OutputDebugString(L"_\n");
+				}
+				break;
+			}
 		}
 		break;
 	case DISPID_DOWNLOADCOMPLETE:
 		{
-			_tprintf(TEXT("DISPID_DOWNLOADCOMPLETE"));
+			switch(m_componentID) {
+			case IE_EXT_COMPONENT_CONTENTSCRIPT:
+				{
+					OutputDebugString(L"\DISPID_DOWNLOADCOMPLETE: _");
+					OutputDebugString(pDispParamsUrl.bstrVal);
+					OutputDebugString(L"_\n");
+				}
+				break;
+			}
 		}
 		break;
 	case DISPID_DOCUMENTCOMPLETE:
 		{
-			_tprintf(TEXT("DISPID_DOCUMENTCOMPLETE"));
-
 			switch(m_componentID) {
 			case IE_EXT_COMPONENT_TOOLBARBUTTON:
 				{
@@ -418,6 +401,13 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 						m_IsBackgroundPageInitialized = true;
 						EventNotifier::issueTabEvent(m_IWebBrowser2BHO, IE_EXT_EVENT_TAB_OPEN, DEFAULT_TAB_ID);
 					}
+				}
+				break;
+			case IE_EXT_COMPONENT_CONTENTSCRIPT:
+				{
+					OutputDebugString(TEXT("\nDISPID_DOCUMENTCOMPLETE: _"));
+					OutputDebugString(pDispParamsUrl.bstrVal);
+					OutputDebugString(L"_\n");
 				}
 				break;
 			}
@@ -437,6 +427,9 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 			case IE_EXT_COMPONENT_CONTENTSCRIPT:
 				{
 					_tprintf(TEXT("IE_EXT_COMPONENT_CONTENTSCRIPT"));
+					OutputDebugString(L"\nDISPID_NAVIGATECOMPLETE2: _");
+					OutputDebugString(pDispParamsUrl.bstrVal);
+					OutputDebugString(L"_\n");
 				}
 				break;
 			case IE_EXT_COMPONENT_TOOLBARBUTTON:
@@ -465,7 +458,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 
 						// ... your code here ...
 						if(visible) {
-							OutputDebugString(L"IE Tab is Visible");
+							OutputDebugString(L"\nIE Tab is Visible\n");
 							
 							//if((m_IWebBrowser2BHO != NULL) && (m_ExtStatus->getTabCounter() > 1) && m_IsBackgroundPageInitialized == true) {
 							if(false){
@@ -528,7 +521,7 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 							}
 
 						} else {
-							OutputDebugString(L"IE Tab is not Visible");
+							OutputDebugString(L"\nIE Tab is not Visible\n");
 							//backupStorage(2);
 							//backupStorage(1);
 							EventNotifier::issueTabEvent(m_IWebBrowser2BHO,IE_EXT_EVENT_TAB_INACTIVATE, DEFAULT_TAB_ID);
@@ -567,7 +560,10 @@ STDMETHODIMP CEentSink::Invoke(DISPID dispIdMember,
 	}
 	*/
 	// Free the variants
-	for(n=0;n<5;n++) VariantClear(&v[n]);
+	//for(n=0;n<5;n++) VariantClear(&v[n]);
+
+	VariantClear(&pDispParamsUrl);
+
 	return S_OK;
 }
 
@@ -594,5 +590,59 @@ bool CEentSink::Event_BeforeNavigate2(
 void CEentSink::setContentScriptInfo( IeExtContentScriptInfo info )
 {
 	m_IeExtContentScriptInfo = info;
+}
+
+bool CEentSink::injectContentScript()
+{
+	// BH_Lin@20131030	--------------------------------------------->
+	// purpose: inject content script.
+
+	HRESULT hr;
+	CComPtr<IHTMLDocument2>   m_pDocument; 
+	hr = m_IWebBrowser2->get_Document((IDispatch**)&m_pDocument);
+
+	CComQIPtr<IHTMLWindow2> pWindow;	
+	m_pDocument->get_parentWindow(&pWindow);
+	CComBSTR bstrLanguage = _T("javascript");
+	VARIANT vEmpty = {0};
+
+	string contentString ;
+
+	if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
+		contentString += "var " ;
+		contentString += m_IeExtContentScriptInfo.extenionID;
+		contentString += " = (function(){ " ;
+	}
+
+	for(int i = 0; i< (int)m_IeExtContentScriptInfo.javascriptsAtEnd.size(); i++)
+	{
+		char *scriptBuff = Util::readInputFile(m_IeExtContentScriptInfo.javascriptsAtEnd[i]);
+		string script(scriptBuff);
+		contentString += "\n";
+		contentString += script;
+	}
+
+	if(IS_CONTENTSCRIPT_ISOLATEDWORLD_ENABLED) {
+		contentString += " function windowExternalDispatchMessage2Background(eventName, eventMessage){";
+		contentString += "    window.external." + m_IeExtContentScriptInfo.extenionID + "dispatchMessage2Background(eventName, JSON.stringify(eventMessage));";
+		contentString += " }";
+		contentString += " return {";
+		contentString += "onIeExtensionMsgContentScriptReceive: function(event) { if(this.hasOwnProperty(\"onIeExtensionMsgContentScriptReceive\") === true ) { return onIeExtensionMsgContentScriptReceive(event);}else{console.warn(\"IeExtAPI: no implement- onIeExtensionMsgContentScriptReceive\")} }";
+		contentString += "};";
+		contentString += "})();";
+	}
+
+	CComBSTR bstrScript(contentString.c_str());
+	hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
+	if(hr == S_OK) {
+		return true;
+	} else {
+		false;
+	}
+
+
+	// BH_Lin@20131030	---------------------------------------------<
+
+	_tprintf(TEXT("Done: IE_EXT_COMPONENT_CONTENTSCRIPT"));
 }
 

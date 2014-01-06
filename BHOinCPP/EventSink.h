@@ -33,6 +33,7 @@ public:
 
 	void setContentScriptInfo(IeExtContentScriptInfo info);
 	void exportExternalFunction(int componentID);
+	bool injectContentScript();
 	void setTabID(int id);
 
 	int m_componentID;
