@@ -84,8 +84,16 @@ HRESULT STDMETHODCALLTYPE DocUIHandler::GetExternal( _Outptr_result_maybenull_ I
 	pClientCall = new ExternalFunction(m_registeredComponentID);
 	*ppDispatch = pClientCall;
 
+	/*
+	if (m_spDefaultDocHostUIHandler) {
+		return m_spDefaultDocHostUIHandler->GetExternal(ppDispatch);
+	} else {
+		return S_OK;
+	}
+	*/
 
 	return S_OK;
+
 
 	/*
 	if (m_spExtDispatch)

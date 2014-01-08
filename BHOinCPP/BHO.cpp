@@ -54,6 +54,8 @@ STDMETHODIMP CBHO::SetSite(IUnknown *pUnkSite)
 {
 	HRESULT hr;
 
+	OutputDebugString(L"call SetSite !");
+
 	// BH_Lin@201310121	------------------------------------------------->
 	// purpose: create web container for BHO
 
