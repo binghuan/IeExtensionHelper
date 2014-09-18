@@ -15,7 +15,7 @@ IeManifestParser::IeManifestParser(HINSTANCE moduleInstance)
 	m_IeManifestFilePath = m_fileFolderPath;
 	m_IeManifestFilePath+= L"\\msiemanifest.json";
 
-	char *fileContent =  Util::readInputFile(m_IeManifestFilePath);
+	char *fileContent =  Util::readInputFile(m_IeManifestFilePath, m_fileFolderPath);
 
 	printf("Read Data from file:\n%s\n", fileContent);
 
@@ -87,7 +87,7 @@ IeExtBHOInfo IeManifestParser::getIeExtBHOInfo()
 
 		Value extId = m_manifestRoot.get("extension_id", NULL);
 		info.extenionID = const_cast<char* > (extId.asCString());
-
+		info.rootFolderPath = m_fileFolderPath;
 		info.isDefined = true;
 
 	} else {
@@ -148,7 +148,7 @@ IeExtToolbarButtonInfo IeManifestParser::getIeExtToolbarButtonInfo()
 
 		Value extId = m_manifestRoot.get("extension_id", NULL);
 		info.extenionID = const_cast<char* > (extId.asCString());
-
+		info.rootFolderPath = m_fileFolderPath;
 		info.isDefined = true;
 
 	} else {
@@ -181,7 +181,7 @@ IeExtContentScriptInfo IeManifestParser::getIeExtContentScriptInfo()
 
 		Value extId = m_manifestRoot.get("extension_id", NULL);
 		info.extenionID = const_cast<char* > (extId.asCString());
-
+		info.rootFolderPath = m_fileFolderPath;
 		info.isDefined = true;
 
 	} else {

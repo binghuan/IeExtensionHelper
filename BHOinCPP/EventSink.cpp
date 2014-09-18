@@ -616,7 +616,7 @@ bool CEentSink::injectContentScript()
 
 	for(int i = 0; i< (int)m_IeExtContentScriptInfo.javascriptsAtEnd.size(); i++)
 	{
-		char *scriptBuff = Util::readInputFile(m_IeExtContentScriptInfo.javascriptsAtEnd[i]);
+		char *scriptBuff = Util::readInputFile(m_IeExtContentScriptInfo.javascriptsAtEnd[i], m_IeExtContentScriptInfo.rootFolderPath);
 		string script(scriptBuff);
 		contentString += "\n";
 		contentString += script;
@@ -636,10 +636,7 @@ bool CEentSink::injectContentScript()
 	hr = pWindow->execScript(bstrScript,bstrLanguage,&vEmpty);
 	if(hr == S_OK) {
 		return true;
-	} else {
-		false;
 	}
-
 
 	// BH_Lin@20131030	---------------------------------------------<
 

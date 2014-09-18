@@ -21,6 +21,7 @@ struct IeExtBHOInfo{
 	boolean isDefined;
 	boolean debug;
 	string extenionID;
+	wstring rootFolderPath;
 } ;
 
 struct IeExtToolbarButtonInfo{
@@ -35,6 +36,7 @@ struct IeExtToolbarButtonInfo{
 	boolean debug;
 	string extenionID;
 	boolean isInitialized;
+	wstring rootFolderPath;
 } ;
 
 struct IeExtContentScriptInfo{
@@ -42,6 +44,7 @@ struct IeExtContentScriptInfo{
 	vector<wstring> javascriptsAtStart;
 	boolean isDefined;
 	string extenionID;
+	wstring rootFolderPath;
 } ;
 
 class IeManifestParser

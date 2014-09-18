@@ -156,10 +156,15 @@ public:
 		return isOK;
 	}
 
-	static char* readInputFile(wstring filePath) {
+	static char* readInputFile(wstring filePath, wstring folderPath) {
 		HANDLE hFile; 
 		DWORD  dwBytesRead = 0;
 		CHAR *ReadBuffer = new CHAR[BUFFERSIZE];
+
+		string::size_type loc = filePath.find(_T(":\\"), 0);
+		if(loc == string::npos) {
+			filePath = folderPath + _T("\\") + filePath;
+		}
 
 		hFile = CreateFile(filePath.c_str(),               // file to open
 			GENERIC_READ,          // open for reading
